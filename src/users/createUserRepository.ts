@@ -1,29 +1,50 @@
 // src/repositories/createUserRepository.ts
-import { IUser, User } from '../models/User';
 
-export const createUserRepository = (): IUserRepository => {
-  return {
-    async create(user: IUser): Promise<IUser> {
-      return await User.create(user);
-    },
+import {User} from "./users";
+import { Knex } from 'knex'
+import {applefarmDB, AppleFarmDBClient} from "../../shared/lib/db";
+import {CreateUserDTO} from "./dtos/createUserDTO";
+import {UpdateUserDTO} from "./dtos/updateUserDTO";
 
-    async findById(id: string): Promise<IUser | null> {
-      return await User.findById(id);
-    },
+export class CreateUserRepository implements IUserRepository {
+  private client: AppleFarmDBClient
+  constructor(client: AppleFarmDBClient) {
+    this.client = client
+  }
 
-    async update(id: string, updates: Partial<IUser>): Promise<IUser | null> {
-      return await User.findByIdAndUpdate(id, updates, { new: true });
-    },
+  get knex(): Knex {
+    return this.client.knex;
+  }
+  createUser(dto: CreateUserDTO): Promise<User> {
+      const query = this.knex('users').insert(dto, ['*']);
 
-    async delete(id: string): Promise<IUser | null> {
-      return await User.findByIdAndDelete(id);
-    },
-  };
-};
+      return query.then((rows) => {
+          return rows[0];
+      })
+  }
+
+    getUser(id: number): Promise<User> {
+      return this.knex('users').where({ id }).first();
+
+    }
+
+    updateUser(id: string, dto: UpdateUserDTO): Promise<User> {
+      const query = this.knex('users').where({ id }).update(dto, ['*']);
+
+      return query.then((rows) => {
+          return rows[0];
+      })
+    }
+
+    delete(id: string): Promise<User> {
+        return this.knex('users').where({ id }).delete()
+    }
+}
+
 
 interface IUserRepository {
-  create(user: IUser): Promise<IUser>;
-  findById(id: string): Promise<IUser | null>;
-  update(id: string, updates: Partial<IUser>): Promise<IUser | null>;
-  delete(id: string): Promise<IUser | null>;
+  createUser(dto: CreateUserDTO): Promise<User>;
+  getUser(id: number): Promise<User>;
+  updateUser(id: string, dto: UpdateUserDTO): Promise<User>
+  delete(id: string): Promise<User>;
 }
