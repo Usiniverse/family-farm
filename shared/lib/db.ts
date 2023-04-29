@@ -49,9 +49,9 @@ export class AppleFarmDBClient {
         }
     }
 
-    // get knex(): Knex {
-    //     return this._knex
-    // }
+    get knex(): Knex {
+        return this._knex
+    }
 
     toString(): string {
         return `AppleFarmDBClient_${this.name}`
