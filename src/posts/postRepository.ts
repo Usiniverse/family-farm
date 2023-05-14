@@ -4,7 +4,7 @@ import {AppleFarmDBClient} from "../../shared/lib/db";
 import {CreatePostDTO} from "./dtos/createPostDTO";
 import {UpdatePostDTO} from "./dtos/updatePostDTO";
 
-export class CreatePostRepository implements ICreatePostsRepository {
+export class PostRepository implements ICreatePostsRepository {
     private client: AppleFarmDBClient;
 
     constructor(client: AppleFarmDBClient) {
@@ -27,11 +27,15 @@ export class CreatePostRepository implements ICreatePostsRepository {
         return this.knex("posts").where({ id }).first();
     }
 
-    updatePost(id: string, dto: UpdatePostDTO): Promise<Post> {
+    getPosts(): Promise<Post[]> {
+        return this.knex("posts").select();
+    }
+
+    updatePost(id: number, dto: UpdatePostDTO): Promise<Post> {
         return this.knex("posts").where({ id }).update(dto, ["*"]);
     }
 
-    delete(id: string): Promise<Post> {
+    delete(id: number): Promise<Post> {
         return this.knex("posts").where({ id }).delete();
     }
 }
@@ -39,6 +43,6 @@ export class CreatePostRepository implements ICreatePostsRepository {
 interface ICreatePostsRepository {
     createPost(dto: CreatePostDTO): Promise<Post>;
     getPost(id: number): Promise<Post>;
-    updatePost(id: string, dto: UpdatePostDTO): Promise<Post>;
-    delete(id: string): Promise<Post>;
+    updatePost(id: number, dto: UpdatePostDTO): Promise<Post>;
+    delete(id: number): Promise<Post>;
 }

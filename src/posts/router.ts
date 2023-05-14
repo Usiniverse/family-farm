@@ -1,12 +1,24 @@
 import express from "express";
-import {createPostController} from "./index";
+import {postController} from "./index";
 
 const postsRouter = express.Router();
 
-postsRouter.get("/posts", (req, res) => {
-    res.send("posts");
+postsRouter.post("/posts", (req, res) => {
+    postController.createPosts(req, res);
 })
 
-postsRouter.post("/posts", (req, res) => {
-    createPostController.executeImpl(req, res);
+postsRouter.get("/posts/:id", (req, res) => {
+    postController.getPost(req, res);
+})
+
+postsRouter.get("/posts", (req, res) => {
+    postController.getPosts(req, res);
+})
+
+postsRouter.put("/posts/:id", (req, res) => {
+    postController.updatePost(req, res);
+})
+
+postsRouter.delete("/posts/:id", (req, res) => {
+    postController.deletePost(req, res);
 })

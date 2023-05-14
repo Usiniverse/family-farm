@@ -1,7 +1,6 @@
 export interface CreatePostDTO {
     title: string
     content: string
-    user_id: number
     posting_password: string
     images?: {
         img_url: string
