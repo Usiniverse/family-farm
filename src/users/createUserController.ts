@@ -1,15 +1,32 @@
 import KakaoLoginService from "../../shared/Oauth/kakaoService"
 import { CreateUserByKaKaoUseCase } from "./createUserByKaKaoUseCase";
-import { CreateUserRepository } from "./createUserRepository";
+import { UserRepository } from "./createUserRepository";
 import { CreateUserDTO } from "./dtos/createUserDTO";
+import {CreateUserUseCase} from "./createUserUseCase";
 
 class CreateUserByKakaoController {
   private kakaoLoginService: KakaoLoginService;
   private createUserByKakaoUseCase: CreateUserByKaKaoUseCase;
+  private createUserUseCase: CreateUserUseCase;
 
-  constructor(kakaoLoginService: KakaoLoginService, createUserByKakaoUseCase: CreateUserByKaKaoUseCase) {
+  constructor(kakaoLoginService: KakaoLoginService, createUserByKakaoUseCase: CreateUserByKaKaoUseCase, createUserUseCase: CreateUserUseCase) {
     this.kakaoLoginService = kakaoLoginService;
     this.createUserByKakaoUseCase = createUserByKakaoUseCase
+    this.createUserUseCase = createUserUseCase
+  }
+
+  async executeImpl(dto: CreateUserDTO) {
+    const { email, phone, password } = dto
+
+    if (!email && !phone) {
+        throw new Error("이메일 또는 전화번호를 입력해주세요")
+    }
+
+    if (!password) {
+        throw new Error("비밀번호를 입력해주세요")
+    }
+
+    return await this.createUserUseCase.execute(dto)
   }
 
   async createUserByKakao(code: string): Promise<void> {

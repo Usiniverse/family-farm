@@ -2,8 +2,7 @@ import { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
 	return knex.schema.createTable('users', (table) => {
-		table.increments('id')
-		table.string('uid').unique()
+		table.increments('id').primary()
 
 		table.string('email').unique()
 

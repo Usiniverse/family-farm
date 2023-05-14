@@ -1,5 +1,5 @@
 export interface CreateUserDTO {
-    email?: string
+    email: string
     phone?: string
     password: string
     // access_token: string

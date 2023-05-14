@@ -2,11 +2,11 @@
 
 import {User} from "./users";
 import { Knex } from 'knex'
-import {applefarmDB, AppleFarmDBClient} from "../../shared/lib/db";
+import {AppleFarmDBClient} from "../../shared/lib/db";
 import {CreateUserDTO} from "./dtos/createUserDTO";
 import {UpdateUserDTO} from "./dtos/updateUserDTO";
 
-export class CreateUserRepository implements IUserRepository {
+export class UserRepository implements IUserRepository {
   private client: AppleFarmDBClient
   constructor(client: AppleFarmDBClient) {
     this.client = client
