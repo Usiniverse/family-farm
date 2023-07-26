@@ -9,12 +9,10 @@ export class UserController {
   }
 
   public async createUserController(dto: CreateUserDTO) {
+    console.log('컨트롤러:::', dto.email, dto.password);
+    
     const createUserController = await this.userService.createUserService(dto)
 
     return createUserController
   }
-}
-
-export const getUserController = async () => {
-  
 }

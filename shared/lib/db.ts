@@ -35,7 +35,7 @@ export class AppleFarmDBClient {
 			acquireConnectionTimeout: 10 * 1000, // 10sec
 		})
 
-		console.debug(`AppleFarmDBClient::initialized`, this.name, options)
+		console.debug(`DB 연결 완료 ::: `, this.name, options)
 		return this._knex 
     }
 
