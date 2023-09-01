@@ -2,7 +2,10 @@ import express from "express";
 import {createUserController} from "./index";
 
 // const kakaoLoginRoutes = express.Router();
-const userRouter = express.Router();
+export const userRouter = express.Router();
+
+userRouter.post("/", createUserController.createUserController)
+// userRouter.use('/users', userRouter)
 
 // kakaoLoginRoutes.get("/auth/kakao", (req, res) => {
 //     // 카카오 로그인 페이지로 리다이렉트
@@ -23,3 +26,4 @@ const userRouter = express.Router();
 
 // userRouter.post("/users", createUserController.createUserController)
 
+// module.exports = userRouter
