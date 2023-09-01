@@ -1,7 +1,7 @@
 import { Knex } from 'knex'
 import { AppleFarmDBClient } from '../../shared/lib/db';
 import { UserDTO } from './dtos/users';
-import { CreateUserDTO } from './dtos/createUserDTO';
+import { log } from 'console';
 
 export class KnexUserRepo implements IUserRepository {
   private client: AppleFarmDBClient
@@ -14,15 +14,19 @@ export class KnexUserRepo implements IUserRepository {
     return this.client.knex
   }
 
-  createUser(dto: CreateUserDTO): Promise<UserDTO> {
-    const query = this.knex('users').insert(dto, ['*'])
+  async createUser(email: string, password: string): Promise<UserDTO> {
+    // const query = this.knex('users').insert({ email, password }, ['*'])
 
-    return query.then((users) => users[0])
+    // console.log('쿼리: ', query);
+    
+    // return query.then((users) => users[0])
+    const [createdUser] = await this.knex('users').insert({ email, password }, ['*']);
+    return createdUser;
   }
 }
 
 interface IUserRepository {
-  createUser(dto: CreateUserDTO): Promise<UserDTO>;
+  createUser(email: string, password: string): Promise<UserDTO>;
   // findById(id: string): Promise<IUser | null>;
   // update(id: string, updates: Partial<IUser>): Promise<IUser | null>;
   // delete(id: string): Promise<IUser | null>;

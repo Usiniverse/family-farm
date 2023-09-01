@@ -4,7 +4,7 @@ import {createUserController} from "./index";
 // const kakaoLoginRoutes = express.Router();
 export const userRouter = express.Router();
 
-userRouter.post("/", createUserController.createUserController)
+userRouter.post("/users", createUserController.createUserController)
 // userRouter.use('/users', userRouter)
 
 // kakaoLoginRoutes.get("/auth/kakao", (req, res) => {
