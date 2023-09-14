@@ -3,8 +3,9 @@ import { applefarmDB } from "./shared/lib/db"
 import cors from 'cors';
 import bodyParser from 'body-parser'
 import { userRouter } from './src/users/router'
-import { CreateUserDTO } from "./src/users/dtos/createUserDTO"
-import { createUserController } from "./src/users/index"
+import cookieSession from 'cookie-session'
+import passport from 'passport'
+import session from 'express-session';
 
 const appServer = async () => {
     const app = express();
@@ -20,6 +21,15 @@ const appServer = async () => {
         console.error(err)
         throw new Error(`Can not connect DATABASE`) 
     }
+
+    app.use(cookieSession({
+        keys: ['node_yun'],
+        // expires: 100 * 60 * 60 // 쿠키 유효기간 1시간
+      }));
+    app.use(passport.initialize());
+    app.use(passport.session());
+    app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
+
 
     app.get('/', (req: Request, res: Response, next: NextFunction) => {
         res.send('Hello World!');
