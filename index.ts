@@ -48,7 +48,6 @@ const appServer = async () => {
 
     // ---------------------패스포트 설정 ---------------------------
     passport.use(
-        // 'naver',
         new NaverStrategy(
            {
               clientID: process.env.NAVER_ID,
