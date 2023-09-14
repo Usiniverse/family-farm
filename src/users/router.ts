@@ -1,29 +1,34 @@
 import express from "express";
 import {createUserController} from "./index";
+import passport from "passport";
+import { naverCallback } from "./naverCallback"
 
 // const kakaoLoginRoutes = express.Router();
 export const userRouter = express.Router();
 
+// 회원가입
 userRouter.post("/users", createUserController.createUserController)
+
+// 네이버 로그인
+userRouter.get('/naver', passport.authenticate('naver'));
+
+// 네이버 로그인 콜백
+userRouter.get("/naver/callback", passport.authenticate('naver'), naverCallback)
+
 // userRouter.use('/users', userRouter)
 
-// kakaoLoginRoutes.get("/auth/kakao", (req, res) => {
-//     // 카카오 로그인 페이지로 리다이렉트
-//     res.redirect(kakaoLoginService.getLoginPageURL());
-// });
+// // Setting the naver oauth routes
+// userRouter.route('/naver')
+//     .get(passport.authenticate('naver', {
+//         authType: 'reprompt'
+//     })
+// )
+    
 
-// // 카카오 로그인 콜백 라우터
-// kakaoLoginRoutes.get("/auth/kakao/callback", async (req, res) => {
-//     try {
-//         const code = req.query.code as string;
-//         await createUserByKaKaoController.createUserByKakao(code);
-//         res.send("카카오 로그인 성공");
-//     } catch (error) {
-//         console.error("카카오 로그인 실패", error);
-//         res.status(500).send("카카오 회원가입에 실패했습니다.");
-//     }
-// });
-
-// userRouter.post("/users", createUserController.createUserController)
+// // creates an account if no account of the new user
+// userRouter.route('/naver/callback')
+//     .get(passport.authenticate('naver', {
+//         failureRedirect: '/'
+//     }));
 
 // module.exports = userRouter

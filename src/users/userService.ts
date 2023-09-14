@@ -1,6 +1,6 @@
-import { log } from 'console';
 import { UserDTO } from './dtos/users';
 import { KnexUserRepo } from './userRepository';
+import { CreateUserDTO } from './dtos/createUserDTO'
 
 export class UserService {
   private userRepo: KnexUserRepo
@@ -9,9 +9,9 @@ export class UserService {
     this.userRepo = userRepo
   }
 
-  public async createUserService(email: string, password: string): Promise<UserDTO> {
+  public async createUserService({ email, password } : CreateUserDTO): Promise<UserDTO> {
     console.log("비즈니스 로직 진입", email);
-    const userRepository = await this.userRepo.createUser(email, password)
+    const userRepository = await this.userRepo.createUser({ email, password })
 
     console.log('유저 서비스 결과', userRepository);
     
