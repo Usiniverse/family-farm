@@ -24,12 +24,12 @@ export class KnexUserRepo implements IUserRepository {
   }
 
   async getUser(email: string): Promise<UserDTO> {
-    const [user] = await this.knex('users').select('*').where(email)
+    const [user] = await this.knex('users').select('*').where({ email })
     return user
   }
 
   async getUserById(id: string): Promise<UserDTO> {
-    const [user] = await this.knex('users').select('*').where(id)
+    const [user] = await this.knex('users').select('*').where({ id })
     return user
   }
 }
