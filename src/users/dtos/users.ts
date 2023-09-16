@@ -1,19 +1,22 @@
 export interface UserDTO {
     id?: number
+	snsId?: string
 	email: string
-	password: string
-	birth?: string
-	phone?: string
 	name?: string
 	nickname?: string
-	provider_data?: {
-		channel?: string
-		kakao_id?: number
-	}
-	uid?: string
-	role?: string
-	phone_verified_at?: Date
-	is_adult?: boolean
+	password: string
+	phone?: string
 	picture?: string
+	birth?: string
+	is_adult?: boolean
+	options?: object
+	provider_data?: {
+		provider: string
+	},
 	email_verified_at?: Date
+	phone_verified_at?: Date
+	created_at?: Date
+	updated_at?: Date
+	blocked_at?: Date
+	deleted_at?: Date
 }

@@ -2,16 +2,10 @@ import express, { Request, Response, NextFunction } from 'express';
 import { applefarmDB } from "./shared/lib/db"
 import cors from 'cors';
 import bodyParser from 'body-parser'
-import { userRouter } from './src/users/router'
-import cookieSession from 'cookie-session'
+import { userRouter } from './src/users/userRouter'
 import passport from 'passport'
 import session from 'express-session';
-import { userRepo } from './src/users/index'
-import jwt from 'jsonwebtoken'
-const { Strategy: NaverStrategy, Profile: NaverProfile } = require('passport-naver-v2');
 import dotenv from 'dotenv'
-import { naverCallback } from './src/users/naverCallback'
-import { log } from 'console';
 import { authRouter } from './src/users/naverRouter';
 dotenv.config()
 
@@ -39,13 +33,13 @@ const appServer = async () => {
         throw new Error(`Can not connect DATABASE`) 
     }
 
-    app.use(cookieSession({
-        keys: ['node_yun'],
-        // expires: 100 * 60 * 60 // 쿠키 유효기간 1시간
-      }));
+    // app.use(cookieSession({
+    //     keys: ['node_yun'],
+    //     // expires: 100 * 60 * 60 // 쿠키 유효기간 1시간
+    //   }));
+    app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
     app.use(passport.initialize());
     app.use(passport.session());
-    app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
 
     app.use('/auth', authRouter)
     app.use('/users', userRouter)
