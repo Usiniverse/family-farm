@@ -45,7 +45,7 @@ export class AppleFarmDBClient {
             
             console.log(`${this.name}::Database CheckConnection`, raw.rows[0].now);
         } catch(err) {
-            throw new Error('DB Error:: 사과챙겨!!')
+            throw new Error('DB Error:: DB 연결 실패')
         }
     }
 

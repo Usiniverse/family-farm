@@ -7,16 +7,9 @@ import passport from 'passport'
 import session from 'express-session';
 import dotenv from 'dotenv'
 import { authRouter } from './src/users/naverRouter';
+import cookieParser from 'cookie-parser'
+const passportConfig = require('./src/passport')
 dotenv.config()
-
-// interface IProfile {
-//    id: string;
-//    response: {
-//      email: string;
-//      name: string;
-//      profile_image: string;
-//    };
-//  }
 
 const appServer = async () => {
     const app = express();
@@ -33,11 +26,20 @@ const appServer = async () => {
         throw new Error(`Can not connect DATABASE`) 
     }
 
-    // app.use(cookieSession({
-    //     keys: ['node_yun'],
-    //     // expires: 100 * 60 * 60 // 쿠키 유효기간 1시간
-    //   }));
-    app.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: false }));
+    passportConfig();
+
+    app.use(cookieParser(process.env.MY_KEY));
+    app.use(
+        session({
+            resave: false,
+            saveUninitialized: false,
+            secret: process.env.MY_KEY as string,
+            cookie: {
+                httpOnly: true,
+                secure: false,
+            },
+        }),
+    );
     app.use(passport.initialize());
     app.use(passport.session());
 

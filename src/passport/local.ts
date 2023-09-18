@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 import { userRepo } from '../users/index'
 import jwt from 'jsonwebtoken'
 
-export const local = () => {
+module.exports = () => {
     passport.use(
       new LocalStrategy(
             {

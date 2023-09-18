@@ -1,12 +1,12 @@
 import express from 'express';
 import passport from 'passport'
-import { userRepo } from './index'
-import { Strategy as NaverStrategy, Profile as NaverProfile } from 'passport-naver-v2';
 import jwt from 'jsonwebtoken'
-import { naverCallback } from "./naverCallback"
-import { KnexUserRepo } from './userRepository';
-import { applefarmDB } from '../../shared/lib/db';
-import { log } from 'console';
+import { Request, Response, NextFunction } from 'express'
+import {createUserController} from "./index";
+import dotenv from 'dotenv'
+dotenv.config()
+
+const { isLoggedIn, isNotLoggedIn, isUser } = require('../../shared/middleware/authMiddleware')
 
 export const authRouter = express.Router()
 
@@ -23,93 +23,66 @@ export interface IProfile {
    profileImage: string;
 }
 
-passport.serializeUser(function (user: any, done: any) {
-   console.log('직렬화', user.snsId);
-   done(null, user.snsId)
-});
-
-passport.deserializeUser(function (snsId: string, done: any) {
-   const user = userRepo.getUserById(snsId)
-   done(null, user);
-});
-
-// ---------------------패스포트 설정 ---------------------------
-passport.use(
-    new NaverStrategy(
-       {
-          clientID: process.env.NAVER_ID,
-          clientSecret: process.env.NAVER_SECRET,
-          callbackURL: '/auth/naver/callback',
-       },
-       async (accessToken: any, refreshToken: any, profile: IProfile, done: any) => {
-          console.log("accessToken ::: ", accessToken);
-          console.log("refreshToken ::: ", refreshToken);
-         //  console.log("네이버 회원정보::: ", profile)          
-          
-          try {
-             const exUser = await userRepo.getUser(profile.email);
-             
-             // 이미 가입된 네이버 프로필이면 성공
-             if (exUser) {
-                console.log('가입된 유저는 그대로 리턴');
-                
-               //  const accessToken = jwt.sign({ id: exUser.id }, 'jwt-secret-key', {
-               //     algorithm: 'HS256',
-               //     expiresIn: '1d'
-               //  }) 
-
-               //  const refreshToken = jwt.sign({ id: exUser.id }, 'jwt-secret-key', {
-               //     algorithm: 'HS256',
-               //     expiresIn: '14d'
-               //  })
-
-               //  const user = {
-               //     email: profile.email,
-               //     nickname: profile.name,
-               //     snsId: profile.id,
-               //     ProfileImages: profile.profileImage,
-               //     accessToken: accessToken,
-               //     refreshToken: refreshToken,
-               //     provider: 'naver'
-               //   };
-
-               console.log('가입된 회원 ::: ', exUser);
-               done(null, exUser);
-             } else {
-                console.log('가입되지 않은 유저 회원가입');
-                
-               //  const accessToken = jwt.sign({ id: profile.id }, 'jwt-secret-key', {
-               //    algorithm: 'HS256',
-               //    expiresIn: '1d'
-               //   }) 
- 
-               //  const refreshToken = jwt.sign({ id: profile.id }, 'jwt-secret-key', {
-               //    algorithm: 'HS256',
-               //    expiresIn: '14d'
-               //  })
-
-                const createUser = await userRepo.createUser({
-                    email: profile.email,
-                    snsId: profile.id,
-                    provider_data: { provider: 'naver'},
-                    nickname: profile.nickname,
-                    name: profile.name,
-                    phone: profile.mobile,
-                    birth: profile.birthyear,
-                })
-
-                done(null, createUser)
-             }
-          } catch (error) {
-             console.error(error);
-             done(error);
-          }
-       },
-    ),
-);
-
 // 네이버 로그인
-authRouter.get('/naver', passport.authenticate('naver', { authType: 'reprompt' }));
+authRouter.get('/naver', isNotLoggedIn ,passport.authenticate('naver', { authType: 'reprompt' }));
 
 // 네이버 로그인 콜백
-authRouter.get("/naver/callback", passport.authenticate('naver'), naverCallback)
+authRouter.get("/naver/callback", isNotLoggedIn, (req: Request, res: Response, next: NextFunction) => {
+   passport.authenticate(
+       "naver",
+       { failureRedirect: '/' },
+       (err: any, user: any, info: any) => {           
+           if (!user) {
+               return res.status(401).send("Authentication failed");
+           }
+
+           if (err) return next(err)
+
+         return req.login(user, loginError => {
+            //? loginError => 미들웨어는 passport/index.js의 passport.deserializeUser((id, done) => 가 done()이 되면 실행하게 된다.
+            // 만일 done(err) 가 됬다면,
+            if (loginError) {
+               console.error(loginError);
+               return next(loginError);
+            }
+            console.log('user:::', user);
+            
+
+            try {
+               const { snsId, email, name } = user               
+               const token = jwt.sign({ snsId }, process.env.MY_KEY as string)
+               const result = {
+                   token,
+                   snsId,
+                   email,
+                   name
+               }
+
+               console.log('네이버 콜백 함수 결과', result)
+               res.send({ user: result })
+            } catch(err) {
+               console.error(err)
+               return
+            }
+         });
+       }
+   )(req, res, next)
+})
+
+
+// 회원가입
+authRouter.post("/users", createUserController.createUserController)
+
+// 유효 회원 검증
+authRouter.get('/users/me', isUser, (req: any, res: Response) => {
+   const nickname = req.decoded.nickname;
+   const profile = req.decoded.profile;
+   return res.status(200).json({
+      code: 200,
+      message: "토큰이 정상입니다.",
+      data: {
+         nickname: nickname,
+         profile: profile,
+      },
+   });
+})
