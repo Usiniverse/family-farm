@@ -10,4 +10,7 @@ export interface CreateUserDTO {
 	name?: string
 	phone?: string
 	birth?: string
+	gender?: string
+	age?: string
+	birthday?: string
 }

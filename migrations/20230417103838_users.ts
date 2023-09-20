@@ -5,13 +5,16 @@ export async function up(knex: Knex): Promise<void> {
 		table.increments('id').primary()
 		table.string('snsId')
 		table.string('email').unique()
-
 		table.string('name')
+		table.string('birth')
+		table.string('address')
+		table.string('birthday')
+		table.string('age')
 		table.string('nickname')
+		table.string('gender')
 		table.string('password')
 		table.string('phone')
 		table.string('picture')
-		table.string('birth')
 		table.string('is_adult')
 
 		table.jsonb('options').defaultTo({})

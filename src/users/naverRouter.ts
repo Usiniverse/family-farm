@@ -3,6 +3,7 @@ import passport from 'passport'
 import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
 import dotenv from 'dotenv'
+import { userRepo } from './index';
 dotenv.config()
 const fetch = require('node-fetch')
 const request = require('request-promise')
@@ -130,7 +131,36 @@ authRouter.get("/naver/callback", isNotLoggedIn, async (req, res) => {
     // string 형태로 값이 담기니 JSON 형식으로 parse를 해줘야 한다.
    const info_result_json = JSON.parse(info_result).response;
 
-   res.send({ info_result_json })
+   try {
+      const existUser = await userRepo.getUserById(info_result_json.id)
+
+      // 만약에 유저가 있으면 그대로 리턴
+      // 없으면 회원가입 시키고 리턴
+      if (existUser) {
+         res.send({ existUser })
+      } else {
+         const createUser = await userRepo.createUser({
+            email: info_result_json.email,
+            provider_data: {
+               provider: 'naver'
+            },
+            nickname: info_result_json.nickname,
+            snsId: info_result_json.id,
+            gender: info_result_json.gender,
+            picture: info_result_json.profile_image,
+            name: info_result_json.name,
+            phone: info_result_json.mobile,
+            birth: info_result_json.birthyear,
+            age: info_result_json.age,
+            birthday: info_result_json.birthday
+         })
+
+         res.send({ createUser })
+      }
+   } catch(error) {
+      console.log(error)
+      return
+   }
 });
 
 // 네이버 회원 프로필 조회 API
