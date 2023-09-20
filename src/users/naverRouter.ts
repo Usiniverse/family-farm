@@ -2,9 +2,9 @@ import express from 'express';
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
 import { Request, Response, NextFunction } from 'express'
-import {createUserController} from "./index";
 import dotenv from 'dotenv'
 dotenv.config()
+const fetch = require('node-fetch')
 
 const { isLoggedIn, isNotLoggedIn, isUser } = require('../../shared/middleware/authMiddleware')
 
@@ -27,51 +27,70 @@ export interface IProfile {
 authRouter.get('/naver', isNotLoggedIn ,passport.authenticate('naver', { authType: 'reprompt' }));
 
 // 네이버 로그인 콜백
-authRouter.get("/naver/callback", isNotLoggedIn, (req: Request, res: Response, next: NextFunction) => {
+authRouter.get("/naver/callback", isNotLoggedIn, async (req: Request, res: Response, next: NextFunction) => {
    passport.authenticate(
-       "naver",
-       { failureRedirect: '/' },
-       (err: any, user: any, info: any) => {           
-           if (!user) {
+         "naver",
+         { failureRedirect: '/' },
+         async (err: any, user: any, info: any) => {
+            if (!user) {
                return res.status(401).send("Authentication failed");
-           }
-
-           if (err) return next(err)
-
-         return req.login(user, loginError => {
-            //? loginError => 미들웨어는 passport/index.js의 passport.deserializeUser((id, done) => 가 done()이 되면 실행하게 된다.
-            // 만일 done(err) 가 됬다면,
-            if (loginError) {
-               console.error(loginError);
-               return next(loginError);
             }
-            console.log('user:::', user);
-            
+
+            if (err) return next(err)
 
             try {
-               const { snsId, email, name } = user               
-               const token = jwt.sign({ snsId }, process.env.MY_KEY as string)
+               const loginError = await new Promise<void>((resolve, reject) => {
+                  req.login(user, (err) => {
+                     if (err) {
+                        console.error(err);
+                        reject(err);
+                     } else {
+                        resolve();
+                     }
+                  });
+               });
+
+               console.log('user:::', user);
+            
+               const { snsId, email, name, accessToken } = user;
                const result = {
-                   token,
-                   snsId,
-                   email,
-                   name
+                  accessToken,
+                  snsId,
+                  email,
+                  name
                }
 
-               console.log('네이버 콜백 함수 결과', result)
-               res.send({ user: result })
-            } catch(err) {
-               console.error(err)
-               return
+               res.send({ result })
+
+               // if (result.accessToken) {
+               //    const header = "Bearer " + accessToken;
+               //    console.log('token :::', header);
+                  
+               //    const userDataRaw = await fetch("https://openapi.naver.com/v1/nid/me", {
+               //       method: "GET",
+               //       headers: {
+               //          Authorization: header
+               //       }
+               //    });
+                  
+               //    const userData = await userDataRaw.json()
+
+               //    console.log('네이버 콜백 함수 결과', userData)
+               //    res.send({ userData });
+               // } else {
+               //    console.log();
+                  
+               //    res.send({ result })
+               // }
+            } catch (err) {
+               console.error(err);
+               return next(err);
             }
-         });
-       }
+         }
    )(req, res, next)
-})
+});
 
-
-// 회원가입
-authRouter.post("/users", createUserController.createUserController)
+// 네이버 회원 프로필 조회 API
 
 // 유효 회원 검증
 authRouter.get('/users/me', isUser, (req: any, res: Response) => {

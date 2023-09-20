@@ -2,6 +2,8 @@ import passport from 'passport'
 import { Strategy as NaverStrategy, Profile as NaverProfile } from 'passport-naver-v2';
 import { userRepo } from '../users/index'
 import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+dotenv.config()
 
 export interface IProfile {
     id: string;
@@ -26,46 +28,48 @@ module.exports = () => {
            },
            async (accessToken: any, refreshToken: any, profile: IProfile, done: any) => {
               try {
-                 const exUser = await userRepo.getUser(profile.email);
+                  const exUser = await userRepo.getUser(profile.email);
                  
-                 // 이미 가입된 네이버 프로필이면 성공
-                 if (exUser) {                    
-                    const accessToken = jwt.sign({ id: exUser.id }, 'jwt-secret-key', {
-                       algorithm: 'HS256',
-                       expiresIn: '1d'
-                    }) 
-    
-                    const refreshToken = jwt.sign({ id: exUser.id }, 'jwt-secret-key', {
-                       algorithm: 'HS256',
-                       expiresIn: '14d'
-                    })
-    
-                    const user = {
-                       email: profile.email,
-                       nickname: profile.nickname,
-                       name: profile.name,
-                       snsId: profile.id,
-                       ProfileImages: profile.profileImage,
-                       accessToken: accessToken,
-                       refreshToken: refreshToken,
-                       provider: 'naver'
-                    };
+                  const secretKey = process.env.MY_KEY as string
 
-                    done(null, user);
-                 } else {
-                    console.log('가입되지 않은 유저 회원가입');
-                    
-                    const accessToken = jwt.sign({ id: profile.id }, 'jwt-secret-key', {
-                      algorithm: 'HS256',
-                      expiresIn: '1d'
+                  // 이미 가입된 네이버 프로필이면 성공
+                  if (exUser) {                    
+                     const accessToken = jwt.sign({ id: exUser.id }, secretKey, {
+                        algorithm: 'HS256',
+                        expiresIn: '1d'
                      }) 
-     
-                    const refreshToken = jwt.sign({ id: profile.id }, 'jwt-secret-key', {
-                      algorithm: 'HS256',
-                      expiresIn: '14d'
-                    })
     
-                    const createUser = await userRepo.createUser({
+                     const refreshToken = jwt.sign({ id: exUser.id }, secretKey, {
+                        algorithm: 'HS256',
+                        expiresIn: '14d'
+                     })
+    
+                     const user = {
+                        email: profile.email,
+                        nickname: profile.nickname,
+                        name: profile.name,
+                        snsId: profile.id,
+                        ProfileImages: profile.profileImage,
+                        accessToken: accessToken,
+                        refreshToken: refreshToken,
+                        provider: 'naver'
+                     };
+
+                     done(null, user);
+                  } else {
+                     console.log('가입되지 않은 유저 회원가입');
+                     
+                     const accessToken = jwt.sign({ id: profile.id }, secretKey, {
+                        algorithm: 'HS256',
+                        expiresIn: '1d'
+                        }) 
+      
+                     const refreshToken = jwt.sign({ id: profile.id }, secretKey, {
+                        algorithm: 'HS256',
+                        expiresIn: '14d'
+                     })
+      
+                     const createUser = await userRepo.createUser({
                         email: profile.email,
                         snsId: profile.id,
                         provider_data: { provider: 'naver'},
@@ -73,19 +77,19 @@ module.exports = () => {
                         name: profile.name,
                         phone: profile.mobile,
                         birth: profile.birthyear,
-                    })
+                     })
 
-                    const user = {
+                     const user = {
                         createUser, accessToken, refreshToken
-                    }
-    
-                    done(null, user)
-                 }
-              } catch (error) {
-                 console.error(error);
-                 done(error);
-              }
-           },
-        ),
-    );
+                     }
+      
+                     done(null, user)
+                  }
+               } catch (error) {
+                  console.error(error);
+                  done(error);
+               }
+            },
+         ),
+      );
 }
