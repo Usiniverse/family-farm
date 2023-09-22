@@ -29,71 +29,9 @@ export interface IProfile {
 authRouter.get('/naver', isNotLoggedIn ,passport.authenticate('naver', { authType: 'reprompt' }));
 
 // 네이버 로그인 콜백
-// authRouter.get("/naver/callback", isNotLoggedIn, async (req: Request, res: Response, next: NextFunction) => {
-//    passport.authenticate(
-//          "naver",
-//          { failureRedirect: '/' },
-//          async (err: any, user: any, info: any) => {
-//             if (!user) {
-//                return res.status(401).send("Authentication failed");
-//             }
-
-//             if (err) return next(err)
-
-//             try {
-//                const loginError = await new Promise<void>((resolve, reject) => {
-//                   req.login(user, (err) => {
-//                      if (err) {
-//                         console.error(err);
-//                         reject(err);
-//                      } else {
-//                         resolve();
-//                      }
-//                   });
-//                });
-
-//                console.log('user:::', user);
-            
-//                const { snsId, email, name, accessToken } = user;
-//                const result = {
-//                   accessToken,
-//                   snsId,
-//                   email,
-//                   name
-//                }
-
-//                res.send({ result })
-
-//                // if (result.accessToken) {
-//                //    const header = "Bearer " + accessToken;
-//                //    console.log('token :::', header);
-                  
-//                //    const userDataRaw = await fetch("https://openapi.naver.com/v1/nid/me", {
-//                //       method: "GET",
-//                //       headers: {
-//                //          Authorization: header
-//                //       }
-//                //    });
-                  
-//                //    const userData = await userDataRaw.json()
-
-//                //    console.log('네이버 콜백 함수 결과', userData)
-//                //    res.send({ userData });
-//                // } else {
-//                //    console.log();
-                  
-//                //    res.send({ result })
-//                // }
-//             } catch (err) {
-//                console.error(err);
-//                return next(err);
-//             }
-//          }
-//    )(req, res, next)
-// });
-
 authRouter.get("/naver/callback", isNotLoggedIn, async (req, res) => {
-   // 토큰을 발급받으려면 query string으로 넘겨야 할 정보들이다.
+   // code: 클라이언트에서 다시 전달받은 코드값
+   // state: 최초 클라이언트에서 발급받음. 정확한 이해 필요
    const code = req.query.code
    const state = 'c5db2fc8-f965-4789-9197-857ce81c60f6';
 
@@ -134,10 +72,16 @@ authRouter.get("/naver/callback", isNotLoggedIn, async (req, res) => {
    try {
       const existUser = await userRepo.getUserById(info_result_json.id)
 
-      // 만약에 유저가 있으면 그대로 리턴
-      // 없으면 회원가입 시키고 리턴
+      const secretKey = process.env.MY_KEY as string
+      // 기존회원 > 리턴, 신규회원 > 회원가입 후 리턴 
+      // 토큰 발급
       if (existUser) {
-         res.send({ existUser })
+         const accessToken = jwt.sign({ id: existUser.id }, secretKey, {
+            algorithm: 'HS256',
+            expiresIn: '1d'
+         }) 
+
+         res.send({ existUser, accessToken })
       } else {
          const createUser = await userRepo.createUser({
             email: info_result_json.email,
@@ -155,26 +99,15 @@ authRouter.get("/naver/callback", isNotLoggedIn, async (req, res) => {
             birthday: info_result_json.birthday
          })
 
-         res.send({ createUser })
+         const accessToken = jwt.sign({ id: createUser.id }, secretKey, {
+            algorithm: 'HS256',
+            expiresIn: '1d'
+         }) 
+
+         res.send({ createUser, accessToken })
       }
    } catch(error) {
       console.log(error)
       return
    }
 });
-
-// 네이버 회원 프로필 조회 API
-
-// 유효 회원 검증
-authRouter.get('/users/me', isUser, (req: any, res: Response) => {
-   const nickname = req.decoded.nickname;
-   const profile = req.decoded.profile;
-   return res.status(200).json({
-      code: 200,
-      message: "토큰이 정상입니다.",
-      data: {
-         nickname: nickname,
-         profile: profile,
-      },
-   });
-})

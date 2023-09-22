@@ -5,9 +5,9 @@ import { applefarmDB } from "../../shared/lib/db";
 
 // 일반 로그인
 const userRepo = new KnexUserRepo(applefarmDB);
-const createUserService = new UserService(userRepo)
-const createUserController = new UserController(createUserService)
+const userService = new UserService(userRepo)
+const userController = new UserController(userService)
 
-export { createUserService, createUserController }
+export { userService, userController }
 
 export { userRepo }

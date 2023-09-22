@@ -4,7 +4,7 @@ export interface UserDTO {
 	email: string
 	name?: string
 	nickname?: string
-	password: string
+	password?: string
 	phone?: string
 	picture?: string
 	birth?: string

@@ -4,26 +4,35 @@ import { UserDTO } from './dtos/users';
 import { applefarmDB } from "../../shared/lib/db";
 import { KnexUserRepo } from "./userRepository";
 import { CreateUserDTO } from './dtos/createUserDTO';
-
-const userRepo = new KnexUserRepo(applefarmDB);
-const createUserService = new UserService(userRepo)
+import { GetUserDTO } from './dtos/getUserDTO';
+import { userRepo, userService } from './index'
 
 export class UserController {
+  private userService: UserService
 
   constructor(userService: UserService) {
-    // this.userService = userService
+    this.userService = userService
   }
 
-  public async createUserController(req: Request, res:Response): Promise<UserDTO> {
-    console.log('컨트롤러:::', req.body);    
+  public async createUserController(req: Request, res:Response): Promise<UserDTO> {  
     const { email, password } : CreateUserDTO = req.body as CreateUserDTO
+    
+    const result = await userService.createUserService({ email, password })
+    
+    res.json(result)
+    return result
+  }
 
-    console.log("에러 없음");
+  public async getUserController(req: Request, res: Response): Promise<UserDTO> {
+    console.log('조회 로직 진입');
     
-    const result = await createUserService.createUserService({ email, password })
+    const { email }: GetUserDTO = req.body
+
+    const result = await userService.getUserService({ email })
+
+    console.log('컨트롤러 조회 결과:::', result);
     
-    console.log('리턴값 : ', result);
-    
+    res.json(result)
     return result
   }
 }
