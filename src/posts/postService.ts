@@ -27,7 +27,7 @@ export class PostService {
         const isValidPassword = passwordRegex.test(posting_password);
 
         if (isValidPassword) {
-            // 비밀번호가 유효해야 함. 운영자만 글 쓰기
+            // 비밀번호가 유효해야 함. 운영자만 글 쓰기 기능 추가해야함
             console.log("비밀번호가 유효합니다.");
         } else {
             // 비밀번호가 숫자가 아닐 경우 에러 처리

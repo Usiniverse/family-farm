@@ -15,7 +15,7 @@ export class PostController {
         const { title, content, posting_password, images } = req.body;
         console.log(req.body);
         
-        const post = await postService.createPost({
+        const post = await this.postService.createPost({
             title, content, posting_password, images
         });
 
