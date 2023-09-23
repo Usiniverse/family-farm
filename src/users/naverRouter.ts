@@ -76,7 +76,7 @@ authRouter.get("/naver/callback", isNotLoggedIn, async (req, res) => {
       // 기존회원 > 리턴, 신규회원 > 회원가입 후 리턴 
       // 토큰 발급
       if (existUser) {
-         const accessToken = jwt.sign({ id: existUser.id }, secretKey, {
+         const accessToken = jwt.sign(existUser, secretKey, {
             algorithm: 'HS256',
             expiresIn: '1d'
          }) 

@@ -1,10 +1,10 @@
-import {PostRepository} from "./postRepository";
-import {applefarmDB} from "../../shared/lib/db";
-import {PostController} from "./postController";
-import {PostUseCase} from "./postUseCase";
+import { applefarmDB } from "../../shared/lib/db";
+import { PostRepository } from "./postRepository";
+import { PostController } from "./postController";
+import { PostService } from "./postService";
 
 const postRepository = new PostRepository(applefarmDB);
-const postUseCase = new PostUseCase(postRepository);
-const postController = new PostController(postUseCase);
+const postService = new PostService(postRepository);
+const postController = new PostController(postService);
 
-export { postController, postUseCase }
+export { postController, postService }

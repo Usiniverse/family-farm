@@ -3,6 +3,7 @@ import { applefarmDB } from "./shared/lib/db"
 import cors from 'cors';
 import bodyParser from 'body-parser'
 import { userRouter } from './src/users/userRouter'
+import { postRouter } from './src/posts/postRouter';
 import passport from 'passport'
 import session from 'express-session';
 import dotenv from 'dotenv'
@@ -45,6 +46,7 @@ const appServer = async () => {
 
     app.use('/auth', authRouter)
     app.use('/users', userRouter)
+    app.use('/posts', postRouter)
 
     app.get('/', (req: Request, res: Response, next: NextFunction) => {
         res.send('Hello World!');

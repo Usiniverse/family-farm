@@ -1,15 +1,22 @@
-import {PostUseCase} from "./postUseCase";
+import { postService } from './index'
+import { PostService } from './postService'
 import express from "express";
 
 export class PostController {
-    private postService: PostUseCase;
-    constructor(postService: PostUseCase) {
+    private postService: PostService;
+    
+    constructor(postService: PostService) {
         this.postService = postService;
     }
-    async createPosts(req: express.Request, res: express.Response) {
-        const { title, content, user_id, posting_password, images, options, created_at, updated_at } = req.body;
-        const post = await this.postService.createPost({
-            ...req.body
+    async createPosts(req: any, res: express.Response) {
+        const user_id = req.authInfo.id
+        console.log(user_id);
+        
+        const { title, content, posting_password, images } = req.body;
+        console.log(req.body);
+        
+        const post = await postService.createPost({
+            title, content, posting_password, images
         });
 
         if (!post) {

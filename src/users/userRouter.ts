@@ -1,5 +1,7 @@
+import { log } from "console";
 import {userController} from "./index";
 import express, { Request, Response, NextFunction } from 'express'
+import jwt from 'jsonwebtoken'
 
 const { isLoggedIn, isNotLoggedIn, isUser } = require('../../shared/middleware/authMiddleware')
 export const userRouter = express.Router();
@@ -8,20 +10,27 @@ export const userRouter = express.Router();
 userRouter.post("/", userController.createUserController)
 
 // 유효 회원 검증
-userRouter.get('/me', isUser, (req: any, res: Response) => {
-    const user = req.decoded.user;
-    return res.status(200).json({
-       code: 200,
-       message: "토큰이 정상입니다.",
-       data: {
-          user: user,
-       },
-    });
+userRouter.get('/me', (req: Request, res: Response) => {
+   const token = req.headers.authorization
+   
+   const tokenVerify = jwt.verify(token as string, process.env.MY_KEY as string)
+   console.log(tokenVerify);
+
+   req.authInfo = tokenVerify
+   console.log('req.authInfo::: ', req.authInfo);
+   
+
+   return res.status(200).json({
+      code: 200,
+      message: "토큰이 정상입니다.",
+      data: {
+         user: tokenVerify,
+      },
+   });
 })
 
 // 회원조회
 userRouter.get("/", userController.getUserController)
-
 
 // 회원정보수정
 

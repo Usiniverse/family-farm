@@ -1,4 +1,4 @@
-import { Post } from "./posts";
+import { PostDTO } from "./posts";
 import { Knex } from "knex";
 import {AppleFarmDBClient} from "../../shared/lib/db";
 import {CreatePostDTO} from "./dtos/createPostDTO";
@@ -15,7 +15,7 @@ export class PostRepository implements ICreatePostsRepository {
         return this.client.knex;
     }
 
-    createPost(dto: CreatePostDTO): Promise<Post> {
+    createPost(dto: CreatePostDTO): Promise<PostDTO> {
         const query = this.knex("posts").insert(dto, ["*"]);
 
         return query.then((rows) => {
@@ -23,26 +23,26 @@ export class PostRepository implements ICreatePostsRepository {
         });
     }
 
-    getPost(id: number): Promise<Post> {
+    getPost(id: number): Promise<PostDTO> {
         return this.knex("posts").where({ id }).first();
     }
 
-    getPosts(): Promise<Post[]> {
+    getPosts(): Promise<PostDTO[]> {
         return this.knex("posts").select();
     }
 
-    updatePost(id: number, dto: UpdatePostDTO): Promise<Post> {
+    updatePost(id: number, dto: UpdatePostDTO): Promise<PostDTO> {
         return this.knex("posts").where({ id }).update(dto, ["*"]);
     }
 
-    delete(id: number): Promise<Post> {
+    deletePost(id: number): Promise<PostDTO> {
         return this.knex("posts").where({ id }).delete();
     }
 }
 
 interface ICreatePostsRepository {
-    createPost(dto: CreatePostDTO): Promise<Post>;
-    getPost(id: number): Promise<Post>;
-    updatePost(id: number, dto: UpdatePostDTO): Promise<Post>;
-    delete(id: number): Promise<Post>;
+    createPost(dto: CreatePostDTO): Promise<PostDTO>;
+    getPost(id: number): Promise<PostDTO>;
+    updatePost(id: number, dto: UpdatePostDTO): Promise<PostDTO>;
+    deletePost(id: number): Promise<PostDTO>;
 }

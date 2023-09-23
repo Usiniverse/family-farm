@@ -20,11 +20,7 @@ export class KnexUserRepo implements IUserRepository {
   }
 
   async getUser(email: string): Promise<UserDTO> {
-    console.log('DB조회');
-    
     const [user] = await this.knex('users').select('*').where({ email })
-    console.log([user]);
-    
     return user
   }
 

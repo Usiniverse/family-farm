@@ -12,25 +12,13 @@ export class UserService {
 
   public async createUserService({ email, password } : CreateUserDTO): Promise<UserDTO> {
     const userRepository = await this.userRepo.createUser({ email, password })
-
-    console.log('유저 서비스 결과', userRepository);
     
     return userRepository
   }
 
-  public async getUserService({ email }: GetUserDTO): Promise<UserDTO> {
-    console.log('조회 서비스');
-    
+  public async getUserService({ email }: GetUserDTO): Promise<UserDTO> {  
     const userRepository = await this.userRepo.getUser(email)
 
-    console.log('비즈니스 로직 조회 결과:: ', userRepository);
-    
     return userRepository
   }
 }
-
-// export const getUserService = async () => {
-
-// }
-
-// exports.UserService = UserService
