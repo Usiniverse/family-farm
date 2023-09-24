@@ -15,7 +15,12 @@ dotenv.config()
 const appServer = async () => {
     const app = express();
 
-    app.use(cors());
+    const corsOptions = {
+        origin: 'http://localhost:8000',
+        credentials: true
+    }
+
+    app.use(cors(corsOptions));
     app.use(express.json())
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
