@@ -79,7 +79,7 @@ authRouter.get("/naver/callback", isNotLoggedIn, async (req, res) => {
          const accessToken = jwt.sign(existUser, secretKey, {
             algorithm: 'HS256',
             expiresIn: '1d'
-         }) 
+         })
 
          res.send({ existUser, accessToken })
       } else {
@@ -89,7 +89,7 @@ authRouter.get("/naver/callback", isNotLoggedIn, async (req, res) => {
                provider: 'naver'
             },
             nickname: info_result_json.nickname,
-            snsId: info_result_json.id,
+            sns_id: info_result_json.id,
             gender: info_result_json.gender,
             picture: info_result_json.profile_image,
             name: info_result_json.name,

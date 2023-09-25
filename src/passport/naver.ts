@@ -48,7 +48,7 @@ module.exports = () => {
                         email: profile.email,
                         nickname: profile.nickname,
                         name: profile.name,
-                        snsId: profile.id,
+                        sns_id: profile.id,
                         ProfileImages: profile.profileImage,
                         accessToken: accessToken,
                         refreshToken: refreshToken,
@@ -71,7 +71,7 @@ module.exports = () => {
       
                      const createUser = await userRepo.createUser({
                         email: profile.email,
-                        snsId: profile.id,
+                        sns_id: profile.id,
                         provider_data: { provider: 'naver'},
                         nickname: profile.nickname,
                         name: profile.name,

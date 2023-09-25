@@ -1,8 +1,10 @@
 import { knex, Knex } from 'knex'
 import Hoek from '@hapi/hoek'
+import { Client } from 'pg'
 import * as dotenv from "dotenv"
 dotenv.config()
 
+// knex ORM
 const defaultKnexConfig: Knex.Config = {
 	client: 'pg',
 	connection: {
@@ -59,3 +61,12 @@ export class AppleFarmDBClient {
 }
 
 export const applefarmDB = new AppleFarmDBClient('안녕하세요! 영주 부석사 아래 가족농원입니다! :)', { debug: false })
+
+// 로우 쿼리
+export const client = new Client({
+    host: process.env.POSTGRESQL_HOST,
+    database: process.env.POSTGRESQL_DATABASE,
+    user: process.env.POSTGRESQL_USER,
+    password: process.env.POSTGRESQL_PASSWORD,
+    port: Number(process.env.POSTGRESQL_PORT) || 5432,
+})

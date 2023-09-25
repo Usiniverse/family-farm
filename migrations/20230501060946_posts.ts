@@ -4,7 +4,8 @@ import { Knex } from "knex";
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('posts', (table) => {
         table.increments('id').primary()
-        table.string('snsId')
+        table.integer('user_id')
+        table.string('sns_id')
         table.string('title')
         table.string('content')
         table.string('posting_password')

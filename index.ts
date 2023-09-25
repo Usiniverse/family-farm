@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { applefarmDB } from "./shared/lib/db"
+import { applefarmDB, client } from "./shared/lib/db"
 import cors from 'cors';
 import bodyParser from 'body-parser'
 import { userRouter } from './src/users/userRouter'
@@ -15,17 +15,18 @@ dotenv.config()
 const appServer = async () => {
     const app = express();
 
-    const corsOptions = {
-        origin: 'http://localhost:8000',
-        credentials: true
-    }
+    // const corsOptions = {
+    //     origin: 'http://localhost:8000',
+    //     credentials: true
+    // }
 
-    app.use(cors(corsOptions));
+    app.use(cors());
     app.use(express.json())
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
       
     try {
+        await client.connect();
         await applefarmDB.checkConnection()
     } catch(err) {
         console.error(err)

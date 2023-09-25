@@ -1,6 +1,6 @@
 export interface UserDTO {
     id?: number
-	snsId?: string
+	sns_id: string
 	email: string
 	name?: string
 	nickname?: string

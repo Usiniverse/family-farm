@@ -1,4 +1,4 @@
 export interface GetUserDTO {
     email: string
-    snsId?: string
+    sns_id?: string
 }

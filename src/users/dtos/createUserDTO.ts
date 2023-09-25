@@ -5,7 +5,7 @@ export interface CreateUserDTO {
 		provider: string
 	},
 	nickname?: string
-	snsId?: string
+	sns_id?: string
 	picture?: string
 	name?: string
 	phone?: string

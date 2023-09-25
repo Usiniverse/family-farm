@@ -1,12 +1,12 @@
 import { UserDTO } from './dtos/users';
-import { KnexUserRepo } from './userRepository';
+import { UserRepository } from './userRepository';
 import { CreateUserDTO } from './dtos/createUserDTO'
 import { GetUserDTO } from './dtos/getUserDTO';
 
 export class UserService {
-  private userRepo: KnexUserRepo
+  private userRepo: UserRepository
 
-  constructor(userRepo: KnexUserRepo) {
+  constructor(userRepo: UserRepository) {
     this.userRepo = userRepo
   }
 
@@ -19,6 +19,11 @@ export class UserService {
   public async getUserService({ email }: GetUserDTO): Promise<UserDTO> {  
     const userRepository = await this.userRepo.getUser(email)
 
+    return userRepository
+  }
+
+  public async getUserById(id: number): Promise<UserDTO> {
+    const userRepository = await this.userRepo.getUserById(id)
     return userRepository
   }
 }

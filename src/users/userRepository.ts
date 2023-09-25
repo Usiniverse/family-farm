@@ -3,7 +3,7 @@ import { AppleFarmDBClient } from '../../shared/lib/db';
 import { UserDTO } from './dtos/users';
 import { CreateUserDTO } from './dtos/createUserDTO'
 import { updateUserDTO } from './dtos/updateUserDTO';
-export class KnexUserRepo implements IUserRepository {
+export class UserRepository implements IUserRepository {
   private client: AppleFarmDBClient
 
   constructor(client: AppleFarmDBClient) {
@@ -24,8 +24,13 @@ export class KnexUserRepo implements IUserRepository {
     return user
   }
 
-  async getUserById(snsId: string): Promise<UserDTO> {
-    const [user] = await this.knex('users').select('*').where({ snsId })
+  async getUserBySnsId(sns_id: string): Promise<UserDTO> {
+    const [user] = await this.knex('users').select('*').where({ sns_id })
+    return user
+  }
+
+  async getUserById(id: number): Promise<UserDTO> {
+    const [user] = await this.knex('users').select('*').where({ id })
     return user
   }
 
@@ -38,9 +43,7 @@ export class KnexUserRepo implements IUserRepository {
 interface IUserRepository {
   createUser(dto: CreateUserDTO): Promise<UserDTO>;
   getUser(email: string): Promise<UserDTO>;
-  getUserById(id: string): Promise<UserDTO>;
+  getUserBySnsId(sns_id: string): Promise<UserDTO>;
+  getUserById(id: number): Promise<UserDTO>
   updateUser(dto: updateUserDTO): Promise<UserDTO>;
-  // findById(id: string): Promise<IUser | null>;
-  // update(id: string, updates: Partial<IUser>): Promise<IUser | null>;
-  // delete(id: string): Promise<IUser | null>;
 }

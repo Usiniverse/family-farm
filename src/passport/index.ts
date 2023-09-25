@@ -1,16 +1,17 @@
 import passport from 'passport'
 import { userRepo } from '../users/index'
+import { UserDTO } from '../users/dtos/users'
 const naver = require('./naver')
 const local = require('./local')
 
 module.exports = () => {
     passport.serializeUser(function (user: any, done: any) {
-        console.log('직렬화', user.snsId);
-        done(null, user.snsId)
+        console.log('직렬화', user.sns_id);
+        done(null, user.sns_id)
      });
      
-    passport.deserializeUser(function (snsId: string, done: any) {
-        userRepo.getUserById(snsId)
+    passport.deserializeUser(function (id: number, done: any) {
+        userRepo.getUserById(id)
         .then(user => done(null, user))
         .catch(err => done(err))
     });

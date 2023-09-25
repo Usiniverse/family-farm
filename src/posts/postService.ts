@@ -5,17 +5,23 @@ import {GetPostDTO} from "./dtos/getPostDTO";
 import {GetPostsDTO} from "./dtos/getPostsDTO";
 import {UpdatePostDTO} from "./dtos/updatePostDTO";
 import {DeletePostDTO} from "./dtos/deletePostDTO";
+import {UserRepository} from "../users/userRepository"
 
 export class PostService {
     private postsRepository: PostRepository;
+    // private userRepository: UserRepository
 
-    constructor(postsRepository: PostRepository) {
+    constructor(postsRepository: PostRepository,
+        //  userRepository: UserRepository
+         ) {
         this.postsRepository = postsRepository;
+        // this.userRepository = userRepository;
     }
 
-    async createPost(dto: CreatePostDTO): Promise<PostDTO> {
-        const { title, posting_password, content } = dto;
-
+    public async createPost(dto: CreatePostDTO): Promise<PostDTO[]> {
+        const { title, posting_password, content, sns_id, images } = dto;
+        console.log('dto::: ', dto);
+        
         if (!title) {
             throw new Error("제목을 입력해주세요");
         }
@@ -41,26 +47,40 @@ export class PostService {
             images : {
                 img_url: ''
             },
+            sns_id
         });
+        console.log('DB생성 후 서비스 반환값::: ', post);
+        
 
         return post;
     }
 
-    async getPost(dto: GetPostDTO): Promise<PostDTO> {
+    public async getPost(dto: GetPostDTO): Promise<PostDTO[]> {
         return await this.postsRepository.getPost(dto.id);
     }
 
-    async getPosts(): Promise<PostDTO[]> {
+    public async getPosts(): Promise<PostDTO[]> {
         return await this.postsRepository.getPosts();
     }
 
-    async updatePost(dto: UpdatePostDTO): Promise<PostDTO> {
+    public async getPostsByUserId(id: number): Promise<PostDTO[]> {
+        return await this.postsRepository.getPostsByUserId(id)
+    }
+
+    public async updatePost(dto: UpdatePostDTO): Promise<PostDTO> {
         return await this.postsRepository.updatePost(dto.id, {
             ...dto
         });
     }
 
-    async deletePost(dto: DeletePostDTO): Promise<PostDTO> {
+    public async deletePost(dto: DeletePostDTO): Promise<PostDTO> {
         return await this.postsRepository.deletePost(dto.id);
+    }
+
+    public async test(id: string): Promise<any> {
+        const test = await this.postsRepository.getPostsBySnsId(id)
+        console.log('service 단계 :::', test);
+
+        return test
     }
 }
