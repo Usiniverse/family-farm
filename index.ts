@@ -1,74 +1,74 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { applefarmDB, client } from "./shared/lib/db"
-import cors from 'cors';
+import express, { Request, Response, NextFunction } from 'express'
+import { applefarmDB, client } from './shared/lib/db'
+import cors from 'cors'
 import bodyParser from 'body-parser'
 import { userRouter } from './src/users/userRouter'
-import { postRouter } from './src/posts/postRouter';
+import { postRouter } from './src/posts/postRouter'
 import passport from 'passport'
-import session from 'express-session';
+import session from 'express-session'
 import dotenv from 'dotenv'
-import { authRouter } from './src/users/naverRouter';
+import { authRouter } from './src/users/naverRouter'
 import cookieParser from 'cookie-parser'
 const passportConfig = require('./src/passport')
 dotenv.config()
 
 const appServer = async () => {
-    const app = express();
+	const app = express()
 
-    // const corsOptions = {
-    //     origin: 'http://localhost:8000',
-    //     credentials: true
-    // }
+	// const corsOptions = {
+	//     origin: 'http://localhost:8000',
+	//     credentials: true
+	// }
 
-    app.use(cors());
-    app.use(express.json())
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
-      
-    try {
-        await client.connect();
-        await applefarmDB.checkConnection()
-    } catch(err) {
-        console.error(err)
-        throw new Error(`Can not connect DATABASE`) 
-    }
+	app.use(cors())
+	app.use(express.json())
+	app.use(bodyParser.json())
+	app.use(bodyParser.urlencoded({ extended: true }))
 
-    passportConfig();
+	try {
+		await client.connect()
+		await applefarmDB.checkConnection()
+	} catch (err) {
+		console.error(err)
+		throw new Error(`Can not connect DATABASE`)
+	}
 
-    app.use(cookieParser(process.env.MY_KEY));
-    app.use(
-        session({
-            resave: false,
-            saveUninitialized: false,
-            secret: process.env.MY_KEY as string,
-            cookie: {
-                httpOnly: true,
-                secure: false,
-            },
-        }),
-    );
-    app.use(passport.initialize());
-    app.use(passport.session());
+	passportConfig()
 
-    app.use('/auth', authRouter)
-    app.use('/users', userRouter)
-    app.use('/posts', postRouter)
+	app.use(cookieParser(process.env.MY_KEY))
+	app.use(
+		session({
+			resave: false,
+			saveUninitialized: false,
+			secret: process.env.MY_KEY as string,
+			cookie: {
+				httpOnly: true,
+				secure: false,
+			},
+		}),
+	)
+	app.use(passport.initialize())
+	app.use(passport.session())
 
-    app.get('/', (req: Request, res: Response, next: NextFunction) => {
-        res.send('Hello World!');
-    });
+	app.use('/auth', authRouter)
+	app.use('/users', userRouter)
+	app.use('/posts', postRouter)
 
-    app.listen('8000', () => {
-        console.log(`
+	app.get('/', (req: Request, res: Response, next: NextFunction) => {
+		res.send('Hello World!')
+	})
+
+	app.listen('8000', () => {
+		console.log(`
             #############################################
                 🛡️ Server listening on port: 8000 🛡️
             #############################################  
-        `);
-    })
+        `)
+	})
 }
 
 if (require.main === module) {
-    appServer()
+	appServer()
 }
 
 export { appServer }
