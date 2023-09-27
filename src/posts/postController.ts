@@ -4,6 +4,7 @@ import { postService } from './index'
 import { PostService } from './postService'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 import express from 'express'
+import { GetPostDTO } from './dtos/getPostDTO'
 
 export class PostController {
 	private postService: PostService
@@ -19,6 +20,11 @@ export class PostController {
 		const { title, content, posting_password, images } = req.body
 
 		const user = await userService.getUserById(req.auth.id)
+
+		if (!user) {
+			res.status(400).json({ message: '유저를 찾을 수 없습니다.' })
+		}
+
 		const userId = req.auth.id
 
 		const post = await postService.createPost({
@@ -50,12 +56,17 @@ export class PostController {
 
 	// 유저아이디로 게시글 조회
 	async getPostsBySnsId(req: CustomExpressRequest, res: express.Response) {
-		console.log(req.auth)
-
 		const user = await userService.getUserById(req.auth.id)
-		console.log(user)
+
+		if (!user) {
+			res.status(400).json({ message: '유저를 찾을 수 없습니다.' })
+		}
 
 		const getUser = await postService.getPostsBySnsId(user.sns_id)
+
+		if (!getUser) {
+			return res.status(400).json({ message: '게시글을 찾을 수 없습니다.' })
+		}
 
 		return res.status(200).json(getUser)
 	}
@@ -73,7 +84,19 @@ export class PostController {
 
 	// 게시글 수정하기
 	async updatePost(req: CustomExpressRequest, res: express.Response) {
-		const user_id = req.auth.id
+		const userId = req.auth.id
+		const postId = +req.params.id
+
+		const getPost = await postService.getPostsByUserId(userId)
+
+		if (!getPost) {
+			return res.status(400).json({ message: '게시글을 찾을 수 없습니다.' })
+		} else if (userId !== getPost.user_id) {
+			return res.status(400).json({ message: '작성자가 아닙니다.' })
+		} else if (postId !== getPost.id) {
+			return res.status(400).json({ message: '유저가 작성한 게시글이 아닙니다.' })
+		}
+
 		const { title, content, posting_password, images } = req.body
 		const post = await postService.updatePost({
 			...req.body,
@@ -86,17 +109,16 @@ export class PostController {
 		return res.status(200).json(post)
 	}
 
-	async deletePost(req: express.Request, res: express.Response) {
-		const {
-			title,
-			content,
-			user_id,
-			posting_password,
-			images,
-			options,
-			created_at,
-			updated_at,
-		} = req.body
+	async deletePost(req: CustomExpressRequest, res: express.Response) {
+		const postId = +req.params.id
+		const userId = req.auth.id
+
+		const getPost = await postService.getPostsByUserId(userId)
+
+		if (!getPost || postId !== getPost.id) {
+			res.status(400).json({ message: '게시글을 찾을 수 없습니다.' })
+		}
+
 		const post = await postService.deletePost({
 			...req.body,
 		})
