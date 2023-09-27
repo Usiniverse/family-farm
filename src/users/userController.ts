@@ -1,32 +1,42 @@
-import { UserService } from './userService';
-import express, { Request, Response } from 'express';
-import { UserDTO } from './dtos/users';
-import { CreateUserDTO } from './dtos/createUserDTO';
-import { GetUserDTO } from './dtos/getUserDTO';
+import { UserService } from './userService'
+import express, { Request, Response } from 'express'
+import { UserDTO } from './dtos/users'
+import { CreateUserDTO } from './dtos/createUserDTO'
+import { GetUserDTO } from './dtos/getUserDTO'
 import { userRepo, userService } from './index'
+import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 
 export class UserController {
-  private userService: UserService
+	private userService: UserService
 
-  constructor(userService: UserService) {
-    this.userService = userService
-  }
+	constructor(userService: UserService) {
+		this.userService = userService
+	}
 
-  public async createUserController(req: Request, res:Response): Promise<UserDTO> {  
-    const { email, password } : CreateUserDTO = req.body as CreateUserDTO
-    
-    const result = await userService.createUserService({ email, password })
-    
-    res.json(result)
-    return result
-  }
+	public async createUserController(req: Request, res: Response): Promise<UserDTO> {
+		const { email, password }: CreateUserDTO = req.body as CreateUserDTO
 
-  public async getUserController(req: Request, res: Response): Promise<UserDTO> {
-    const { email }: GetUserDTO = req.body
+		const result = await userService.createUserService({ email, password })
 
-    const result = await userService.getUserService({ email })
-    
-    res.json(result)
-    return result
-  }
+		res.json(result)
+		return result
+	}
+
+	public async getUserController(req: Request, res: Response): Promise<UserDTO> {
+		const { email }: GetUserDTO = req.body
+
+		const result = await userService.getUserService({ email })
+
+		res.json(result)
+		return result
+	}
+
+	public async getUserBySnsId(req: CustomExpressRequest, res: Response): Promise<UserDTO> {
+		const { sns_id }: GetUserDTO = req.body as GetUserDTO
+
+		const result = await userService.getUserBySnsId({ sns_id })
+
+		res.json(result)
+		return result
+	}
 }

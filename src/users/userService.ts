@@ -24,7 +24,12 @@ export class UserService {
 
 	public async getUserById(id: number): Promise<UserDTO> {
 		const userRepository = await this.userRepo.getUserById(id)
-		console.log(userRepository)
+
+		return userRepository
+	}
+
+	public async getUserBySnsId({ sns_id }: GetUserDTO): Promise<UserDTO> {
+		const userRepository = await this.userRepo.getUserBySnsId(sns_id)
 
 		return userRepository
 	}

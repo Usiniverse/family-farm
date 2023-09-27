@@ -15,10 +15,10 @@ dotenv.config()
 const appServer = async () => {
 	const app = express()
 
-	// const corsOptions = {
-	//     origin: 'http://localhost:8000',
-	//     credentials: true
-	// }
+	const corsOptions = {
+		origin: ['http://localhost:8000', '*'],
+		credentials: true,
+	}
 
 	app.use(cors())
 	app.use(express.json())
@@ -26,8 +26,7 @@ const appServer = async () => {
 	app.use(bodyParser.urlencoded({ extended: true }))
 
 	try {
-		await client.connect()
-		await applefarmDB.checkConnection()
+		await applefarmDB.startServer()
 	} catch (err) {
 		console.error(err)
 		throw new Error(`Can not connect DATABASE`)

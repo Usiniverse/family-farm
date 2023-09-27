@@ -1,72 +1,53 @@
-import { knex, Knex } from 'knex'
-import Hoek from '@hapi/hoek'
 import { Client } from 'pg'
-import * as dotenv from "dotenv"
+import * as dotenv from 'dotenv'
 dotenv.config()
 
-// knex ORM
-const defaultKnexConfig: Knex.Config = {
-	client: 'pg',
-	connection: {
-		host: process.env.POSTGRESQL_HOST,
-		database: process.env.POSTGRESQL_DATABASE,
-		user: process.env.POSTGRESQL_USER,
-        password: process.env.POSTGRESQL_PASSWORD,
-		port: Number(process.env.POSTGRESQL_PORT) || 5432,
-	},
-	pool: {
-		min: parseInt(process.env.POSTGRESQL_POOL_MIN || '1'),
-		max: parseInt(process.env.POSTGRESQL_POOL_MAX || '10'),
-	},
-}
+export const client = new Client({
+	host: process.env.POSTGRESQL_HOST,
+	database: process.env.POSTGRESQL_DATABASE,
+	user: process.env.POSTGRESQL_USER,
+	password: process.env.POSTGRESQL_PASSWORD,
+	port: Number(process.env.POSTGRESQL_PORT) || 5432,
+})
 
 export class AppleFarmDBClient {
-    private _knex: Knex
-    private name: string
+	private name: string
 
-    constructor(name: string, options: Knex.Config = {}) {
-        this.name = name
-        this._knex = this.init(options)
-    }
+	constructor(name: string) {
+		this.name = name
+	}
 
-    public init(options: Knex.Config) {
-        const mergedConfig = Hoek.applyToDefaults(defaultKnexConfig, options)
+	public async checkConnection(): Promise<void> {
+		try {
+			await client.connect()
+			console.log('DB에 연결되었습니다.')
+		} catch (err) {
+			console.error('Error connecting to the database:', err)
+			throw err
+		}
+	}
 
-		this._knex = knex({
-			...mergedConfig,
-			acquireConnectionTimeout: 10 * 1000, // 10sec
-		})
+	public async checkDatabaseStatus() {
+		try {
+			const result = await client.query('SELECT NOW()')
+			console.log('가족농원 OPEN! ::: ', result.rows[0].now)
+		} catch (err) {
+			console.error('Error checking database status:', err)
+			throw err
+		}
+	}
 
-		console.debug(`DB 연결 완료 ::: `, this.name, options)
-		return this._knex 
-    }
-
-    public async checkConnection(): Promise<void> {
-        try {
-            const raw = await this._knex.raw('SELECT NOW()')
-            
-            console.log(`${this.name}::Database CheckConnection`, raw.rows[0].now);
-        } catch(err) {
-            throw new Error('DB Error:: DB 연결 실패')
-        }
-    }
-
-    get knex(): Knex {
-        return this._knex
-    }
-
-    toString(): string {
-        return `AppleFarmDBClient_${this.name}`
-    }
+	public async startServer() {
+		try {
+			await this.checkConnection()
+			await this.checkDatabaseStatus()
+			// Your server startup logic here
+		} catch (err) {
+			// Handle errors during server startup
+			console.error('Server startup failed:', err)
+			process.exit(1)
+		}
+	}
 }
 
-export const applefarmDB = new AppleFarmDBClient('안녕하세요! 영주 부석사 아래 가족농원입니다! :)', { debug: false })
-
-// 로우 쿼리
-export const client = new Client({
-    host: process.env.POSTGRESQL_HOST,
-    database: process.env.POSTGRESQL_DATABASE,
-    user: process.env.POSTGRESQL_USER,
-    password: process.env.POSTGRESQL_PASSWORD,
-    port: Number(process.env.POSTGRESQL_PORT) || 5432,
-})
+export const applefarmDB = new AppleFarmDBClient('안녕하세요! 영주 부석사 아래 가족농원입니다! :)')
