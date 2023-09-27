@@ -1,4 +1,4 @@
-import { PostDTO } from './posts'
+import { PostDTO } from './dtos/posts'
 import { CreatePostDTO } from './dtos/createPostDTO'
 import { UpdatePostDTO } from './dtos/updatePostDTO'
 import { client } from '../../shared/lib/db'

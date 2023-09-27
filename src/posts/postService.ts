@@ -1,5 +1,5 @@
 import { ICreatePostsRepository } from './postRepository'
-import { PostDTO } from './posts'
+import { PostDTO } from './dtos/posts'
 import { CreatePostDTO } from './dtos/createPostDTO'
 import { GetPostDTO } from './dtos/getPostDTO'
 import { UpdatePostDTO } from './dtos/updatePostDTO'
