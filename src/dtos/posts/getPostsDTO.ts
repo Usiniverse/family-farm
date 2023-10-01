@@ -1,4 +1,4 @@
-import { PostDTO } from './posts'
+import { PostDTO } from './postDTO'
 
 export interface GetPostsDTO {
 	total?: number

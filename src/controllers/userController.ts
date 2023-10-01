@@ -1,9 +1,9 @@
-import { UserService } from './userService'
+import { UserService } from '../services/userService'
 import express, { Request, Response } from 'express'
-import { UserDTO } from './dtos/users'
-import { CreateUserDTO } from './dtos/createUserDTO'
-import { GetUserDTO } from './dtos/getUserDTO'
-import { userRepo, userService } from './index'
+import { UserDTO } from '../dtos/users/userDTO'
+import { CreateUserDTO } from '../dtos/users/createUserDTO'
+import { GetUserDTO } from '../dtos/users/getUserDTO'
+import { userRepo, userService } from '../routers/index'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 
 export class UserController {

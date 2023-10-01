@@ -2,7 +2,7 @@ import express from 'express'
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { userRepo } from '../users'
+import { userRepo } from '../routers/index'
 
 const request = require('request-promise')
 const { isLoggedIn, isNotLoggedIn, isUser } = require('../../shared/middleware/authMiddleware')

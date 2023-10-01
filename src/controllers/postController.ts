@@ -1,10 +1,9 @@
-import { UserService } from '../users/userService'
-import { userService } from '../users/index'
-import { postService } from './index'
-import { PostService } from './postService'
+import { UserService } from '../services/userService'
+import { userService, postService } from '../routers/index'
+import { PostService } from '../services/postService'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 import express from 'express'
-import { GetPostDTO } from './dtos/getPostDTO'
+// import { GetPostDTO } from '../dtos/posts/getPostDTO'
 
 export class PostController {
 	private postService: PostService

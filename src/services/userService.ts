@@ -1,7 +1,7 @@
-import { UserDTO } from './dtos/users'
-import { UserRepository } from './userRepository'
-import { CreateUserDTO } from './dtos/createUserDTO'
-import { GetUserDTO } from './dtos/getUserDTO'
+import { UserDTO } from '../dtos/users/userDTO'
+import { UserRepository } from '../repositorys/userRepository'
+import { CreateUserDTO } from '../dtos/users/createUserDTO'
+import { GetUserDTO } from '../dtos/users/getUserDTO'
 
 export class UserService {
 	private userRepo: UserRepository

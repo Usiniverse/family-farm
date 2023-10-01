@@ -1,6 +1,6 @@
-import { PostDTO } from './dtos/posts'
-import { CreatePostDTO } from './dtos/createPostDTO'
-import { UpdatePostDTO } from './dtos/updatePostDTO'
+import { PostDTO } from '../dtos/posts/postDTO'
+import { CreatePostDTO } from '../dtos/posts/createPostDTO'
+import { UpdatePostDTO } from '../dtos/posts/updatePostDTO'
 import { client } from '../../shared/lib/db'
 
 export class PostRepository implements ICreatePostsRepository {

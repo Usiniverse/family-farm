@@ -1,5 +1,5 @@
-import { UserDTO } from './dtos/users'
-import { CreateUserDTO } from './dtos/createUserDTO'
+import { UserDTO } from '../dtos/users/userDTO'
+import { CreateUserDTO } from '../dtos/users/createUserDTO'
 import { client } from '../../shared/lib/db'
 export class UserRepository implements IUserRepository {
 	async createUser(dto: CreateUserDTO): Promise<UserDTO> {
