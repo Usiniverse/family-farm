@@ -7,7 +7,7 @@ import { postRouter } from './src/routers/postRouter'
 import passport from 'passport'
 import session from 'express-session'
 import dotenv from 'dotenv'
-import { authRouter } from './src/routers/naverRouter'
+import { indexRouter } from './src/routers/'
 import cookieParser from 'cookie-parser'
 const passportConfig = require('./src/passport')
 dotenv.config()
@@ -49,9 +49,7 @@ const appServer = async () => {
 	app.use(passport.initialize())
 	app.use(passport.session())
 
-	app.use('/auth', authRouter)
-	app.use('/users', userRouter)
-	app.use('/posts', postRouter)
+	app.use('/', indexRouter)
 
 	app.get('/', (req: Request, res: Response, next: NextFunction) => {
 		res.send('Hello World!')

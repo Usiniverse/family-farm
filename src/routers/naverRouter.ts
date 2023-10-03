@@ -6,10 +6,10 @@ dotenv.config()
 
 const { isLoggedIn, isNotLoggedIn, isUser } = require('../../shared/middleware/authMiddleware')
 
-export const authRouter = express.Router()
+export const naverRouter = express.Router()
 
 // 네이버 로그인
-authRouter.get('/naver', isNotLoggedIn, passport.authenticate('naver', { authType: 'reprompt' }))
+naverRouter.get('/naver', isNotLoggedIn, passport.authenticate('naver', { authType: 'reprompt' }))
 
 // 네이버 로그인 콜백
-authRouter.get('/naver/callback', isNotLoggedIn, naverCallback)
+naverRouter.get('/naver/callback', isNotLoggedIn, naverCallback)

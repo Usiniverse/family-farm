@@ -1,23 +1,14 @@
-import { UserService } from '../services/userService'
-import { UserController } from '../controllers/userController'
-import { UserRepository } from '../repositorys/userRepository'
-import { PostRepository } from '../repositorys/postRepository'
-import { PostController } from '../controllers/postController'
-import { PostService } from '../services/postService'
+import { Router } from 'express'
+import { userRouter } from './userRouter'
+import { naverRouter } from './naverRouter'
+import { postRouter } from './postRouter'
 
-// 일반 로그인
-const userRepo = new UserRepository()
-const userService = new UserService(userRepo)
-const userController = new UserController(userService)
+const indexRouter = Router()
 
-// import { applefarmDB } from "../../shared/lib/db"
+indexRouter.use('/users', userRouter)
 
-const postRepository = new PostRepository()
-const postService = new PostService(postRepository)
-const postController = new PostController(postService, userService)
+indexRouter.use('/auth', naverRouter)
 
-export { postController, postService }
+indexRouter.use('/posts', postRouter)
 
-export { userService, userController }
-
-export { userRepo, postRepository }
+export { indexRouter }
