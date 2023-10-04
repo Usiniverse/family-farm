@@ -1,9 +1,9 @@
 import { ICreatePostsRepository } from '../repositorys/postRepository'
-import { PostDTO } from './dtos/postDTO'
+import { PostDTO } from '../dtos/posts/postDTO'
 import { CreatePostDTO } from '../dtos/posts/createPostDTO'
-import { GetPostDTO } from './dtos/getPostDTO'
-import { UpdatePostDTO } from './dtos/updatePostDTO'
-import { DeletePostDTO } from './dtos/deletePostDTO'
+import { GetPostDTO } from '../dtos/posts/getPostDTO'
+import { UpdatePostDTO } from '../dtos/posts/updatePostDTO'
+import { DeletePostDTO } from '../dtos/posts/deletePostDTO'
 
 export class PostService {
 	private postsRepository: ICreatePostsRepository

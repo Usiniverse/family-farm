@@ -3,7 +3,7 @@ import express, { Request, Response } from 'express'
 import { UserDTO } from '../dtos/users/userDTO'
 import { CreateUserDTO } from '../dtos/users/createUserDTO'
 import { GetUserDTO } from '../dtos/users/getUserDTO'
-import { userRepo, userService } from '../routers/index'
+import { userService } from '../services'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 
 export class UserController {

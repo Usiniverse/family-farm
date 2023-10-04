@@ -19,6 +19,8 @@ export class AppleFarmDBClient {
 
 	public async checkConnection(): Promise<void> {
 		try {
+			console.log('db연결 시도 :: check connection')
+
 			await client.connect()
 			console.log('DB에 연결되었습니다.')
 		} catch (err) {
@@ -29,6 +31,7 @@ export class AppleFarmDBClient {
 
 	public async checkDatabaseStatus() {
 		try {
+			console.log('db연결 시도 :: checkDatabase')
 			const result = await client.query('SELECT NOW()')
 			console.log('가족농원 OPEN! ::: ', result.rows[0].now)
 		} catch (err) {

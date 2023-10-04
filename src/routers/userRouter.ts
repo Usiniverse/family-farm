@@ -1,5 +1,5 @@
 import { log } from 'console'
-import { userController } from './index'
+import { userController } from '../controllers'
 import express, { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 

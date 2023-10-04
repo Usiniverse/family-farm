@@ -1,5 +1,5 @@
 import express from 'express'
-import { postController } from './index'
+import { postController } from '../controllers'
 const { isUser, checkedUser } = require('../../shared/middleware/authMiddleware')
 
 export const postRouter = express.Router()

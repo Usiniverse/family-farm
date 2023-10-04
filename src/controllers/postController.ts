@@ -1,5 +1,5 @@
 import { UserService } from '../services/userService'
-import { userService, postService } from '../routers/index'
+import { userService, postService } from '../services'
 import { PostService } from '../services/postService'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 import express from 'express'
