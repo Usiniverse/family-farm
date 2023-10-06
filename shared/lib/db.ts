@@ -34,6 +34,8 @@ export class AppleFarmDBClient {
 			console.log('db연결 시도 :: checkDatabase')
 			const result = await client.query('SELECT NOW()')
 			console.log('가족농원 OPEN! ::: ', result.rows[0].now)
+			// const file = await client.query('SHOW hba_file;')
+			// console.log('파일경로 ::: ', file)
 		} catch (err) {
 			console.error('Error checking database status:', err)
 			throw err
