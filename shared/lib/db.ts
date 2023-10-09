@@ -1,5 +1,7 @@
 import { Client } from 'pg'
 import * as dotenv from 'dotenv'
+import mysql from 'mysql'
+import { log } from 'console'
 dotenv.config()
 
 export const client = new Client({
@@ -8,6 +10,13 @@ export const client = new Client({
 	user: process.env.POSTGRESQL_USER,
 	password: process.env.POSTGRESQL_PASSWORD,
 	port: Number(process.env.POSTGRESQL_PORT) || 5432,
+})
+
+export const connection = mysql.createConnection({
+	host: 'applefarm.cwq337zjtojp.ap-northeast-2.rds.amazonaws.com',
+	user: 'applefarm',
+	password: 'dbtls007!!',
+	database: 'applefarm',
 })
 
 export class AppleFarmDBClient {
@@ -21,8 +30,13 @@ export class AppleFarmDBClient {
 		try {
 			console.log('db연결 시도 :: check connection')
 
-			await client.connect()
-			console.log('DB에 연결되었습니다.')
+			connection.connect((err) => {
+				if (err) {
+					throw err
+				} else {
+					console.log('DB에 연결되었습니다.')
+				}
+			})
 		} catch (err) {
 			console.error('Error connecting to the database:', err)
 			throw err
@@ -32,8 +46,15 @@ export class AppleFarmDBClient {
 	public async checkDatabaseStatus() {
 		try {
 			console.log('db연결 시도 :: checkDatabase')
-			const result = await client.query('SELECT NOW()')
-			console.log('가족농원 OPEN! ::: ', result.rows[0].now)
+			connection.connect((err) => {
+				if (err) {
+					throw err
+				} else {
+					connection.query('SELECT NOW()', (err, rows, field) => {
+						console.log('가족농원 OPEN! ::: ', rows)
+					})
+				}
+			})
 			// const file = await client.query('SHOW hba_file;')
 			// console.log('파일경로 ::: ', file)
 		} catch (err) {
@@ -46,9 +67,7 @@ export class AppleFarmDBClient {
 		try {
 			await this.checkConnection()
 			await this.checkDatabaseStatus()
-			// Your server startup logic here
 		} catch (err) {
-			// Handle errors during server startup
 			console.error('Server startup failed:', err)
 			process.exit(1)
 		}
