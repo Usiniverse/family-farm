@@ -31,11 +31,14 @@ export class AppleFarmDBClient {
 			console.log('db연결 시도 :: checkDatabase')
 			connection.connect((err) => {
 				if (err) {
-					throw err
+					console.log('DB연결에러::: ', err)
+					return
 				} else {
 					connection.query('SELECT NOW()', (err, rows, field) => {
 						console.log('가족농원 OPEN! ::: ', rows)
 					})
+
+					connection.end()
 				}
 			})
 		} catch (err) {
