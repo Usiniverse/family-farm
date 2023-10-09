@@ -1,7 +1,6 @@
 import { Client } from 'pg'
 import * as dotenv from 'dotenv'
 import mysql from 'mysql'
-import { log } from 'console'
 dotenv.config()
 
 export const client = new Client({
@@ -13,10 +12,10 @@ export const client = new Client({
 })
 
 export const connection = mysql.createConnection({
-	host: 'applefarm.cwq337zjtojp.ap-northeast-2.rds.amazonaws.com',
-	user: 'applefarm',
-	password: 'dbtls007!!',
-	database: 'applefarm',
+	host: process.env.MYSQL_HOST,
+	user: process.env.MYSQL_USER,
+	password: process.env.MYSQL_PASSWORD,
+	database: process.env.MYSQL_DATABASE,
 })
 
 export class AppleFarmDBClient {
@@ -24,23 +23,6 @@ export class AppleFarmDBClient {
 
 	constructor(name: string) {
 		this.name = name
-	}
-
-	public async checkConnection(): Promise<void> {
-		try {
-			console.log('db연결 시도 :: check connection')
-
-			connection.connect((err) => {
-				if (err) {
-					throw err
-				} else {
-					console.log('DB에 연결되었습니다.')
-				}
-			})
-		} catch (err) {
-			console.error('Error connecting to the database:', err)
-			throw err
-		}
 	}
 
 	public async checkDatabaseStatus() {
@@ -55,8 +37,6 @@ export class AppleFarmDBClient {
 					})
 				}
 			})
-			// const file = await client.query('SHOW hba_file;')
-			// console.log('파일경로 ::: ', file)
 		} catch (err) {
 			console.error('Error checking database status:', err)
 			throw err
@@ -65,7 +45,7 @@ export class AppleFarmDBClient {
 
 	public async startServer() {
 		try {
-			await this.checkConnection()
+			// await this.checkConnection()
 			await this.checkDatabaseStatus()
 		} catch (err) {
 			console.error('Server startup failed:', err)
