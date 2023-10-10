@@ -39,7 +39,6 @@ export const naverCallback = async (req, res) => {
 
 	const info_result = await request.get(info_options)
 
-	// string 형태로 값이 담기니 JSON 형식으로 parse를 해줘야 한다.
 	const info_result_json = JSON.parse(info_result).response
 	console.log('info_result_json ::: ', info_result_json)
 
@@ -50,7 +49,7 @@ export const naverCallback = async (req, res) => {
 		// 기존회원 > 리턴, 신규회원 > 회원가입 후 리턴
 		// 토큰 발급
 		if (existUser) {
-			const accessToken = jwt.sign(existUser, secretKey, {
+			const accessToken = jwt.sign({ id: existUser.id }, secretKey, {
 				algorithm: 'HS256',
 				expiresIn: '1d',
 			})

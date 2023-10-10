@@ -22,7 +22,7 @@ export class OrderRepository implements IOrderRepository {
 	}
 
 	public async getOrder(id: number): Promise<OrderDTO> {
-		const query = `SELECT * FROM orders WHERE id = $1`
+		const query = `SELECT * FROM orders WHERE id = ?`
 		const values = [id]
 
 		try {

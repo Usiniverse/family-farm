@@ -100,8 +100,6 @@ export class UserRepository implements IUserRepository {
 				})
 			})
 
-			console.log('게시글 DB 생성 완료 :::', result)
-
 			return result[0]
 		} catch (e) {
 			console.error(e)

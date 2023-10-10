@@ -42,9 +42,7 @@ export class PostService {
 			title,
 			posting_password,
 			content,
-			images: {
-				img_url: '',
-			},
+			images,
 			sns_id,
 			user_id,
 		})
@@ -52,15 +50,15 @@ export class PostService {
 		return post
 	}
 
-	public async getPost(dto: GetPostDTO): Promise<PostDTO> {
-		return await this.postsRepository.getPost(dto.id)
+	public async getPost(id: number): Promise<PostDTO> {
+		return await this.postsRepository.getPost(id)
 	}
 
 	public async getPosts(): Promise<PostDTO[]> {
 		return await this.postsRepository.getPosts()
 	}
 
-	public async getPostsByUserId(id: number): Promise<PostDTO> {
+	public async getPostsByUserId(id: number): Promise<PostDTO[]> {
 		return await this.postsRepository.getPostsByUserId(id)
 	}
 
@@ -72,12 +70,5 @@ export class PostService {
 
 	public async deletePost(dto: DeletePostDTO): Promise<PostDTO> {
 		return await this.postsRepository.deletePost(dto.id)
-	}
-
-	public async getPostsBySnsId(id: string): Promise<any> {
-		const test = await this.postsRepository.getPostsBySnsId(id)
-		console.log('service 단계 :::', test)
-
-		return test
 	}
 }
