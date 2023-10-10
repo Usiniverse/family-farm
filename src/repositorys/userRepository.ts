@@ -1,9 +1,10 @@
 import { UserDTO } from '../dtos/users/userDTO'
 import { CreateUserDTO } from '../dtos/users/createUserDTO'
-import { client } from '../../shared/lib/db'
+import { connection } from '../../shared/lib/db'
 export class UserRepository implements IUserRepository {
 	async createUser(dto: CreateUserDTO): Promise<UserDTO> {
-		const query = `INSERT INTO users (sns_id, email, name, birth, birthday, age, nickname, gender, password, phone, picture) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`
+		const query = `INSERT INTO users (sns_id, email, name, birth, birthday, age, nickname, gender, password, phone, picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+
 		const values = [
 			dto.sns_id,
 			dto.email,
@@ -19,57 +20,92 @@ export class UserRepository implements IUserRepository {
 		]
 
 		try {
-			const result = await client.query(query, values)
-			console.log('유저 DB생성 완료 :::', result.rows)
+			const result = await new Promise((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
 
-			client.end()
-
-			return result.rows[0] as UserDTO
-		} catch (err) {
-			console.log(err)
-			throw err
+			return result[0]
+		} catch (e) {
+			console.error(e)
+			throw e
 		}
 	}
 
 	async getUser(email: string): Promise<UserDTO> {
-		const query = `SELECT * FROM users WHERE email = $1`
+		const query = `SELECT * FROM users WHERE email = ?`
 		const values = [email]
 
 		try {
-			const result = await client.query(query, values)
-			console.log('유저 DB 조회 완료 :::', result.rows)
-			return result.rows[0] as UserDTO
-		} catch (error) {
-			console.error(error)
-			throw error
+			const result = await new Promise((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
+
+			console.log('게시글 DB 생성 완료 :::', result)
+
+			return result[0]
+		} catch (e) {
+			console.error(e)
+			throw e
 		}
 	}
 
 	async getUserBySnsId(sns_id: string): Promise<UserDTO> {
-		const query = `SELECT * FROM users WHERE sns_id = $1`
+		console.log('유저아이디 찾아보기', sns_id)
+
+		const query = `SELECT * FROM users WHERE sns_id = ?`
 		const values = [sns_id]
 
 		try {
-			const result = await client.query(query, values)
-			console.log('유저 DB 조회 완료 :::', result.rows)
-			return result.rows[0] as UserDTO
-		} catch (error) {
-			console.error(error)
-			throw error
+			const result = await new Promise((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
+
+			return result[0]
+		} catch (e) {
+			console.error(e)
+			throw e
 		}
 	}
 
 	async getUserById(id: number): Promise<UserDTO> {
-		const query = `SELECT * FROM users WHERE id = $1`
+		const query = `SELECT * FROM users WHERE id = ?`
 		const values = [id]
 
 		try {
-			const result = await client.query(query, values)
-			console.log('유저 DB 조회 완료 :::', result.rows)
-			return result.rows[0] as UserDTO
-		} catch (error) {
-			console.error(error)
-			throw error
+			const result = await new Promise((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
+
+			console.log('게시글 DB 생성 완료 :::', result)
+
+			return result[0]
+		} catch (e) {
+			console.error(e)
+			throw e
 		}
 	}
 

@@ -37,8 +37,6 @@ export class AppleFarmDBClient {
 					connection.query('SELECT NOW()', (err, rows, field) => {
 						console.log('가족농원 OPEN! ::: ', rows)
 					})
-
-					connection.end()
 				}
 			})
 		} catch (err) {

@@ -5,16 +5,29 @@ import { client } from '../../shared/lib/db'
 
 export class PostRepository implements ICreatePostsRepository {
 	public async createPost(dto: CreatePostDTO): Promise<PostDTO> {
-		const query = `INSERT INTO posts (sns_id, title, content, posting_password, images) VALUES ($1, $2, $3, $4, $5) RETURNING *`
+		const query = `
+		  INSERT INTO posts (sns_id, title, content, posting_password, images)
+		  VALUES (?, ?, ?, ?, ?)
+		`
+
 		const values = [dto.sns_id, dto.title, dto.content, dto.posting_password, dto.images]
 
 		try {
-			const result = await client.query(query, values)
-			console.log('게시글 DB생성 완료 :::', result.rows)
+			const result = await new Promise((resolve, reject) => {
+				client.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						console.log(results)
 
-			client.end()
+						resolve(results)
+					}
+				})
+			})
 
-			return result.rows[0] as PostDTO
+			console.log('게시글 DB 생성 완료 :::', result)
+
+			return result[0] as PostDTO
 		} catch (e) {
 			console.error(e)
 			throw e
@@ -73,7 +86,7 @@ export class PostRepository implements ICreatePostsRepository {
 	}
 
 	async updatePost(id: number, dto: UpdatePostDTO): Promise<PostDTO> {
-		const query = `SELECT * FROM posts WHERE id = $1`
+		const query = `UPDATE posts SET user_id = $2, title = $3, content = $4, images = $5 WHERE id = $1 RETURNING *`
 		const values = [id, dto.user_id, dto.title, dto.content, dto.images]
 
 		try {

@@ -1,11 +1,8 @@
-import express from 'express'
-import passport from 'passport'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { userRepo } from '../routers/index'
+import { userRepository } from '../repositorys/index'
 
 const request = require('request-promise')
-const { isLoggedIn, isNotLoggedIn, isUser } = require('../../shared/middleware/authMiddleware')
 
 export const naverCallback = async (req, res) => {
 	// code: 클라이언트에서 다시 전달받은 코드값
@@ -41,13 +38,13 @@ export const naverCallback = async (req, res) => {
 	}
 
 	const info_result = await request.get(info_options)
-	console.log('info_result', info_result)
 
 	// string 형태로 값이 담기니 JSON 형식으로 parse를 해줘야 한다.
 	const info_result_json = JSON.parse(info_result).response
+	console.log('info_result_json ::: ', info_result_json)
 
 	try {
-		const existUser = await userRepo.getUserBySnsId(info_result_json.id)
+		const existUser = await userRepository.getUserBySnsId(info_result_json.id)
 
 		const secretKey = process.env.MY_KEY as string
 		// 기존회원 > 리턴, 신규회원 > 회원가입 후 리턴
@@ -60,7 +57,7 @@ export const naverCallback = async (req, res) => {
 
 			res.send({ existUser, accessToken })
 		} else {
-			const createUser = await userRepo.createUser({
+			await userRepository.createUser({
 				email: info_result_json.email,
 				provider_data: {
 					provider: 'naver',
@@ -76,12 +73,14 @@ export const naverCallback = async (req, res) => {
 				birthday: info_result_json.birthday,
 			})
 
-			const accessToken = jwt.sign({ id: createUser.id }, secretKey, {
+			const getUser = await userRepository.getUserBySnsId(info_result_json.id)
+
+			const accessToken = jwt.sign({ id: getUser.id }, secretKey, {
 				algorithm: 'HS256',
 				expiresIn: '1d',
 			})
 
-			res.send({ createUser, accessToken })
+			res.send({ getUser, accessToken })
 		}
 	} catch (error) {
 		console.log(error)

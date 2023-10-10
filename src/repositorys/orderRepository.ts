@@ -1,6 +1,7 @@
 import { CreateOrderDTO } from '../dtos/orders/createOrderDTO'
 import { OrderDTO } from '../dtos/orders/orderDTO'
 import { client } from '../../shared/lib/db'
+import { UpdateOrderDTO } from '../dtos/orders/updateOrderDTO'
 
 export class OrderRepository implements IOrderRepository {
 	public async createOrder(dto: CreateOrderDTO): Promise<OrderDTO> {
@@ -51,9 +52,27 @@ export class OrderRepository implements IOrderRepository {
 			throw e
 		}
 	}
+
+	public async updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO> {
+		const query = `UPDATE posts SET user_id = $2, order_count = $3, content = $4 WHERE id = $1 RETURNING *`
+		const values = [dto.id, dto.user_id, dto.order_count, dto.target_address]
+
+		try {
+			const result = await client.query(query, values)
+			console.log('주문 생성 완료 :::', result.rows)
+
+			client.end()
+
+			return result.rows[0] as OrderDTO
+		} catch (e) {
+			console.error(e)
+			throw e
+		}
+	}
 }
 export interface IOrderRepository {
 	createOrder(dto: CreateOrderDTO): Promise<OrderDTO>
 	getOrder(dto: number): Promise<OrderDTO>
 	getOrderHistoryByUserId(user_id: number): Promise<OrderDTO[]>
+	updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO>
 }
