@@ -5,6 +5,7 @@ import { CreateUserDTO } from '../dtos/users/createUserDTO'
 import { GetUserDTO } from '../dtos/users/getUserDTO'
 import { userService } from '../services'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
+import jwt from 'jsonwebtoken'
 
 export class UserController {
 	private userService: UserService
@@ -22,10 +23,10 @@ export class UserController {
 		return result
 	}
 
-	public async getUserController(req: Request, res: Response): Promise<UserDTO> {
+	public async getUserByEmail(req: CustomExpressRequest, res: Response): Promise<UserDTO> {
 		const { email }: GetUserDTO = req.body
 
-		const result = await userService.getUserService({ email })
+		const result = await userService.getUserByEmail({ email })
 
 		res.json(result)
 		return result

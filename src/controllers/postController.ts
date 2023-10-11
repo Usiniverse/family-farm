@@ -72,7 +72,7 @@ export class PostController {
 	}
 
 	// 전체 게시글 조회하기
-	async getPosts(req: express.Request, res: express.Response) {
+	async getPosts(req: CustomExpressRequest, res: express.Response) {
 		const posts = await postService.getPosts()
 
 		if (!posts) {
