@@ -11,7 +11,17 @@ export class UserService {
 		this.userRepo = userRepo
 	}
 
-	public async createUserService({ email, password }: CreateUserDTO): Promise<UserDTO> {
+	public async createUserService(dto: CreateUserDTO): Promise<UserDTO> {
+		const { email, password, birth, age } = dto as CreateUserDTO
+
+		const user = await this.userRepo.getUser(email)
+
+		// 가입된 유저라면 유저 정보 리턴
+		if (user) {
+			return user
+		}
+
+		// 가입되지 않았을 경우 회원가입 진행
 		try {
 			const passwordRegex = /^[a-zA-Z0-9]{8,10}$/
 			if (!password.match(passwordRegex)) {
@@ -21,7 +31,24 @@ export class UserService {
 			const saltRounds = 10
 			const hashedPassword = await bcrypt.hash(password, saltRounds)
 
-			const result = await this.userRepo.createUser({ email, password: hashedPassword })
+			let isAdult = false
+
+			if (birth) {
+				const currentDate = new Date()
+				const birthDate = new Date(birth)
+				const ageDiff = currentDate.getFullYear() - birthDate.getFullYear()
+
+				if (ageDiff >= 19 || +age >= 19) {
+					isAdult = true
+				}
+			}
+
+			const result = await this.userRepo.createUser({
+				email,
+				password: hashedPassword,
+				is_adult: isAdult,
+				...dto,
+			})
 
 			return result
 		} catch (error) {

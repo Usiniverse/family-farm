@@ -14,10 +14,10 @@ export class UserController {
 		this.userService = userService
 	}
 
-	public async createUserController(req: Request, res: Response): Promise<UserDTO> {
-		const { email, password }: CreateUserDTO = req.body as CreateUserDTO
+	public async createUserController(req: CustomExpressRequest, res: Response): Promise<UserDTO> {
+		const dto: CreateUserDTO = req.body as CreateUserDTO
 
-		const result = await userService.createUserService({ email, password })
+		const result = await userService.createUserService(dto)
 
 		res.json(result)
 		return result

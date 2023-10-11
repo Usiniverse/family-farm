@@ -1,9 +1,14 @@
 import { UserDTO } from '../dtos/users/userDTO'
 import { CreateUserDTO } from '../dtos/users/createUserDTO'
 import { connection } from '../../shared/lib/db'
+import { resolve } from 'path'
 export class UserRepository implements IUserRepository {
 	async createUser(dto: CreateUserDTO): Promise<UserDTO> {
-		const query = `INSERT INTO users (sns_id, email, name, birth, birthday, age, nickname, gender, password, phone, picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+		const query = `
+			INSERT INTO users 
+			(sns_id, email, name, birth, birthday, age, nickname, gender, password, phone, picture, is_adult) 
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		`
 
 		const values = [
 			dto.sns_id,
@@ -17,10 +22,11 @@ export class UserRepository implements IUserRepository {
 			dto.password,
 			dto.phone,
 			dto.picture,
+			dto.is_adult,
 		]
 
 		try {
-			const result = await new Promise((resolve, reject) => {
+			const result: any = await new Promise((resolve, reject) => {
 				connection.query(query, values, (error, results) => {
 					if (error) {
 						reject(error)
@@ -30,7 +36,20 @@ export class UserRepository implements IUserRepository {
 				})
 			})
 
-			return result[0]
+			const selectUserQuery = `SELECT * FROM users where id = ?`
+			const selectUserValue = [result.insertId]
+
+			const selectUser = await new Promise((resolve, reject) => {
+				connection.query(selectUserQuery, selectUserValue, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
+
+			return selectUser[0] as UserDTO
 		} catch (e) {
 			console.error(e)
 			throw e
@@ -51,8 +70,6 @@ export class UserRepository implements IUserRepository {
 					}
 				})
 			})
-
-			console.log('게시글 DB 생성 완료 :::', result)
 
 			return result[0]
 		} catch (e) {
