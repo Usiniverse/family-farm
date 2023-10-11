@@ -2,6 +2,7 @@ import { UserDTO } from '../dtos/users/userDTO'
 import { UserRepository } from '../repositorys/userRepository'
 import { CreateUserDTO } from '../dtos/users/createUserDTO'
 import { GetUserDTO } from '../dtos/users/getUserDTO'
+import { registerSchema, alreadyEmailSchema } from '../../shared/lib/validator'
 import bcrypt from 'bcrypt'
 
 export class UserService {
@@ -14,6 +15,9 @@ export class UserService {
 	public async createUserService(dto: CreateUserDTO): Promise<UserDTO> {
 		const { email, password, birth, age } = dto as CreateUserDTO
 
+		// 이메일, 비밀번호 형식 체크
+		await registerSchema.validateAsync({ email, password })
+
 		const user = await this.userRepo.getUser(email)
 
 		// 가입된 유저라면 유저 정보 리턴
@@ -23,11 +27,6 @@ export class UserService {
 
 		// 가입되지 않았을 경우 회원가입 진행
 		try {
-			const passwordRegex = /^[a-zA-Z0-9]{8,10}$/
-			if (!password.match(passwordRegex)) {
-				throw new Error('비밀번호는 8~10자의 영문 대/소문자와 숫자로 이루어져야 합니다.')
-			}
-
 			const saltRounds = 10
 			const hashedPassword = await bcrypt.hash(password, saltRounds)
 
