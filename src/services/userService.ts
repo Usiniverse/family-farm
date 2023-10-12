@@ -4,6 +4,7 @@ import { CreateUserDTO } from '../dtos/users/createUserDTO'
 import { GetUserDTO } from '../dtos/users/getUserDTO'
 import { registerSchema, alreadyEmailSchema } from '../../shared/lib/validator'
 import bcrypt from 'bcrypt'
+import { UpdateUserDTO } from '../dtos/users/updateUserDTO'
 
 export class UserService {
 	private userRepo: UserRepository
@@ -71,5 +72,37 @@ export class UserService {
 		const result = await this.userRepo.getUserBySnsId(sns_id)
 
 		return result
+	}
+
+	public async updateUser(dto: UpdateUserDTO & { id: number }): Promise<UserDTO> {
+		const { id, email, password, name, nickname, address } = dto
+
+		// 이메일, 비밀번호 형식 체크
+		await registerSchema.validateAsync({ email, password })
+
+		const user = await this.userRepo.getUser(email)
+
+		// 가입되지 않았을 경우 회원가입 진행
+		try {
+			const saltRounds = 10
+			const hashedPassword = await bcrypt.hash(password, saltRounds)
+
+			const result = await this.userRepo.updateUser(
+				{
+					email,
+					password: hashedPassword,
+					...dto,
+				},
+				id,
+			)
+
+			return result
+		} catch (error) {
+			throw error
+		}
+	}
+
+	public async deleteUser(id: number): Promise<void> {
+		await this.userRepo.deleteUser(id)
 	}
 }

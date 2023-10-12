@@ -10,7 +10,7 @@ const indexRouter = Router()
 indexRouter.use('/users', userRouter)
 
 // 네이버 로그인 관리
-indexRouter.use('/naver', naverRouter)
+indexRouter.use('/auth', naverRouter)
 
 // 게시글 관리
 indexRouter.use('/posts', postRouter)

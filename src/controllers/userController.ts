@@ -5,7 +5,7 @@ import { CreateUserDTO } from '../dtos/users/createUserDTO'
 import { GetUserDTO } from '../dtos/users/getUserDTO'
 import { userService } from '../services'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
-import jwt from 'jsonwebtoken'
+import { UpdateUserDTO } from '../dtos/users/updateUserDTO'
 
 export class UserController {
 	private userService: UserService
@@ -36,6 +36,29 @@ export class UserController {
 		const { sns_id }: GetUserDTO = req.body as GetUserDTO
 
 		const result = await userService.getUserBySnsId({ sns_id })
+
+		res.json(result)
+		return result
+	}
+
+	public async updateUser(req: CustomExpressRequest, res: Response): Promise<UserDTO> {
+		const id = req.auth.id
+		// const id = req.auth.id
+
+		const dto: UpdateUserDTO = { ...req.body, id }
+
+		const result = await userService.updateUser(dto)
+
+		res.json(result)
+		return result
+	}
+
+	public async deleteUser(req: CustomExpressRequest, res: Response): Promise<void> {
+		const id = req.auth.id
+
+		await userService.getUserById(id)
+
+		const result = await userService.deleteUser(id)
 
 		res.json(result)
 		return result

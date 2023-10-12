@@ -6,7 +6,7 @@ dotenv.config()
 
 //* 사용자 미들웨어를 직접 구현
 
-exports.isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
 	// isAuthenticated()로 검사해 로그인이 되어있으면
 	if (req.isAuthenticated()) {
 		next() // 다음 미들웨어
@@ -15,7 +15,7 @@ exports.isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
 	}
 }
 
-exports.isNotLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+export const isNotLoggedIn = (req: Request, res: Response, next: NextFunction) => {
 	if (!req.isAuthenticated()) {
 		next() // 로그인 안되어있으면 다음 미들웨어
 	} else {
@@ -24,7 +24,7 @@ exports.isNotLoggedIn = (req: Request, res: Response, next: NextFunction) => {
 	}
 }
 
-exports.isUser = (req: Request, res: Response, next: NextFunction) => {
+export const isUser = (req: Request, res: Response, next: NextFunction) => {
 	const token = req.headers.authorization
 
 	const tokenVerify = jwt.verify(token as string, process.env.MY_KEY as string)
@@ -40,7 +40,7 @@ exports.isUser = (req: Request, res: Response, next: NextFunction) => {
 	})
 }
 
-exports.checkedUser = (req, res, next) => {
+export const checkedUser = (req, res, next) => {
 	const token = req.headers.authorization
 
 	const tokenVerify = jwt.verify(token as string, process.env.MY_KEY as string)

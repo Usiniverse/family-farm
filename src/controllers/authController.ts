@@ -1,7 +1,7 @@
 import { userService } from '../services'
 import { LoginDTO } from '../dtos/auth/LoginDTO'
 import { UserDTO } from '../dtos/users/userDTO'
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
@@ -27,23 +27,5 @@ export class AuthController {
 		} catch (error) {
 			throw error
 		}
-	}
-
-	public async getMe(req: Request, res: Response) {
-		const token = req.headers.authorization
-
-		const tokenVerify = jwt.verify(token as string, process.env.MY_KEY as string)
-		console.log(tokenVerify)
-
-		req.authInfo = tokenVerify
-		console.log('req.authInfo::: ', req.authInfo)
-
-		return res.status(200).json({
-			code: 200,
-			message: '토큰이 정상입니다.',
-			data: {
-				user: tokenVerify,
-			},
-		})
 	}
 }

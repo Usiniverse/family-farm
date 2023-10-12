@@ -9,7 +9,7 @@ const { isLoggedIn, isNotLoggedIn, isUser } = require('../../shared/middleware/a
 export const naverRouter = express.Router()
 
 // 네이버 로그인
-naverRouter.get('/', isNotLoggedIn, passport.authenticate('naver', { authType: 'reprompt' }))
+naverRouter.get('/naver/', isNotLoggedIn, passport.authenticate('naver', { authType: 'reprompt' }))
 
 // 네이버 로그인 콜백
-naverRouter.get('/callback', isNotLoggedIn, naverCallback)
+naverRouter.get('/naver/callback', isNotLoggedIn, naverCallback)

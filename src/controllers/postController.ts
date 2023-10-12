@@ -18,6 +18,7 @@ export class PostController {
 	async createPosts(req: CustomExpressRequest, res: express.Response) {
 		const { title, content, posting_password, images } = req.body
 		console.log('request::: ', req.body)
+		console.log('토큰정보 ::: ', req.auth)
 
 		const user = await userService.getUserById(req.auth.id)
 
