@@ -87,6 +87,18 @@ export class UserService {
 			const saltRounds = 10
 			const hashedPassword = await bcrypt.hash(password, saltRounds)
 
+			// 닉네임, 이메일 중복 체크
+			const users = await this.userRepo.getUsers()
+			for (let i = 0; i < users.length; i++) {
+				if (users[i].email === email) {
+					throw new Error('중복된 이메일입니다.')
+				}
+
+				if (users[i].nickname === nickname) {
+					throw new Error('중복된 닉네임입니다.')
+				}
+			}
+
 			const result = await this.userRepo.updateUser(
 				{
 					email,

@@ -58,6 +58,26 @@ export class UserRepository implements IUserRepository {
 		}
 	}
 
+	async getUsers(): Promise<UserDTO[]> {
+		const query = `SELECT * FROM users`
+		try {
+			const result = await new Promise((resolve, reject) => {
+				connection.query(query, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
+
+			return result as UserDTO[]
+		} catch (e) {
+			console.error(e)
+			throw e
+		}
+	}
+
 	async getUser(email: string): Promise<UserDTO> {
 		const query = `SELECT * FROM users WHERE email = ?`
 		const values = [email]
@@ -202,6 +222,7 @@ export class UserRepository implements IUserRepository {
 
 interface IUserRepository {
 	createUser(dto: CreateUserDTO): Promise<UserDTO>
+	getUsers(): Promise<UserDTO[]>
 	getUser(email: string): Promise<UserDTO>
 	getUserBySnsId(sns_id: string): Promise<UserDTO>
 	getUserById(id: number): Promise<UserDTO>
