@@ -1,9 +1,7 @@
 import { userService } from '../services'
 import { LoginDTO } from '../dtos/auth/LoginDTO'
 import { UserDTO } from '../dtos/users/userDTO'
-import express, { NextFunction, Request, Response } from 'express'
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 
 export class AuthController {
 	public async loginService({ email, password }: LoginDTO): Promise<UserDTO | null> {
