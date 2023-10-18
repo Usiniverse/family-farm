@@ -42,7 +42,7 @@ export class ProductRepository implements IProductRepository {
 	}
 
 	public async getProduct(id: number): Promise<ProductDTO> {
-		const query = `SELECT * FROM products WHERE = ?`
+		const query = `SELECT * FROM products WHERE id = ?`
 		const values = [id]
 
 		try {
@@ -64,7 +64,7 @@ export class ProductRepository implements IProductRepository {
 	}
 
 	public async getProductsByUserId(user_id: number): Promise<ProductDTO[]> {
-		const query = `SELECT * FROM products WHERE = ?`
+		const query = `SELECT * FROM products WHERE user_id = ?`
 		const values = [user_id]
 
 		try {

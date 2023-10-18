@@ -5,3 +5,7 @@ import { checkedUser } from '../../shared/middleware/authMiddleware'
 export const orderRouter = express.Router()
 
 orderRouter.post('/', checkedUser, orderController.createOrder)
+
+orderRouter.get('/', checkedUser, orderController.getOrderHistoryByUserId)
+
+orderRouter.get('/:id', checkedUser, orderController.getOrder)

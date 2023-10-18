@@ -20,4 +20,20 @@ export class ProductController {
 
 		return res.status(200).send(result)
 	}
+
+	public async getProduct(req: CustomExpressRequest, res: express.Response) {
+		const id = req.params.id
+
+		const result = await productService.getProduct(+id)
+
+		return res.status(200).send(result)
+	}
+
+	public async getProductsByUserId(req: CustomExpressRequest, res: express.Response) {
+		const user_id = req.auth.id
+
+		const result = await productService.getProductsByUserId(user_id)
+
+		return res.status(200).send(result)
+	}
 }

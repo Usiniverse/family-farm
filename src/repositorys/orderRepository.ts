@@ -51,10 +51,17 @@ export class OrderRepository implements IOrderRepository {
 		const values = [id]
 
 		try {
-			const result = await client.query(query, values)
-			client.end()
+			const result = await new Promise<RowDataPacket>((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
 
-			return result.rows[0] as OrderDTO
+			return result as OrderDTO
 		} catch (e) {
 			console.error(e)
 			throw e
@@ -62,16 +69,21 @@ export class OrderRepository implements IOrderRepository {
 	}
 
 	public async getOrderHistoryByUserId(user_id: number): Promise<OrderDTO[]> {
-		const query = `SELECT * FROM orders WHERE user_id = $1`
+		const query = `SELECT * FROM orders WHERE user_id = ?`
 		const values = [user_id]
 
 		try {
-			const result = await client.query(query, values)
-			console.log('유저 주문 조회 완료 :::', result.rows)
+			const result = await new Promise<RowDataPacket>((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
 
-			client.end()
-
-			return result.rows[0] as OrderDTO[]
+			return result as OrderDTO[]
 		} catch (e) {
 			console.error(e)
 			throw e
@@ -79,16 +91,39 @@ export class OrderRepository implements IOrderRepository {
 	}
 
 	public async updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO> {
-		const query = `UPDATE posts SET user_id = $2, order_count = $3, content = $4 WHERE id = $1 RETURNING *`
-		const values = [dto.id, dto.user_id, dto.order_count, dto.target_address]
+		const query = `UPDATE orders SET user_id = ?, order_count = ?, content = ? WHERE id = ?`
+		const values = [dto.user_id, dto.order_count, dto.target_address, dto.id]
 
 		try {
-			const result = await client.query(query, values)
-			console.log('주문 생성 완료 :::', result.rows)
+			const insertResult = await new Promise<RowDataPacket>((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
 
-			client.end()
+			const selectQuery = `SELECT * FROM orders WHERE id = ?`
 
-			return result.rows[0] as OrderDTO
+			const selectResult = await new Promise((resolve, reject) => {
+				connection.query(
+					selectQuery,
+					[insertResult.insertId],
+					(selectError, selectResults) => {
+						if (selectError) {
+							reject(selectError)
+						} else {
+							resolve(selectResults)
+						}
+					},
+				)
+			})
+
+			console.log('주문 수정 후 조회 ::: ', selectResult[0])
+
+			return selectResult[0] as OrderDTO
 		} catch (e) {
 			console.error(e)
 			throw e
