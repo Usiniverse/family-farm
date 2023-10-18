@@ -3,6 +3,7 @@ import { OrderDTO } from '../dtos/orders/orderDTO'
 import { client } from '../../shared/lib/db'
 import { UpdateOrderDTO } from '../dtos/orders/updateOrderDTO'
 import { connection } from '../../shared/lib/db'
+import { RowDataPacket } from 'mysql2/promise'
 
 export class OrderRepository implements IOrderRepository {
 	public async createOrder(dto: CreateOrderDTO): Promise<OrderDTO> {
@@ -10,7 +11,7 @@ export class OrderRepository implements IOrderRepository {
 		const values = [dto.user_id, dto.order_count, dto.target_address, dto.product_id]
 
 		try {
-			const insertResult: any = await new Promise((resolve, reject) => {
+			const insertResult = await new Promise<RowDataPacket>((resolve, reject) => {
 				connection.query(query, values, (error, results) => {
 					if (error) {
 						reject(error)

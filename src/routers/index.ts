@@ -4,6 +4,7 @@ import { naverRouter } from './naverRouter'
 import { postRouter } from './postRouter'
 import { authRouter } from './authRouter'
 import { orderRouter } from './orderRouter'
+import { productRouter } from './productRouter'
 
 const indexRouter = Router()
 
@@ -21,5 +22,8 @@ indexRouter.use('/auth', authRouter)
 
 // 주문 관리
 indexRouter.use('/orders', orderRouter)
+
+// 상품 관리
+indexRouter.use('/products', productRouter)
 
 export { indexRouter }

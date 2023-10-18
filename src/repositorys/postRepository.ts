@@ -2,7 +2,7 @@ import { PostDTO } from '../dtos/posts/postDTO'
 import { CreatePostDTO } from '../dtos/posts/createPostDTO'
 import { UpdatePostDTO } from '../dtos/posts/updatePostDTO'
 import { connection } from '../../shared/lib/db'
-// import mysql, { ResultSetHeader, RowDataPacket } from 'mysql2/promise'
+import { RowDataPacket } from 'mysql2/promise'
 
 export class PostRepository implements ICreatePostsRepository {
 	public async createPost(dto: CreatePostDTO): Promise<PostDTO> {
@@ -16,7 +16,7 @@ export class PostRepository implements ICreatePostsRepository {
 		const values = [dto.sns_id, dto.title, dto.content, dto.posting_password, images]
 
 		try {
-			const insertResult: any = await new Promise((resolve, reject) => {
+			const insertResult = await new Promise<RowDataPacket>((resolve, reject) => {
 				connection.query(insertQuery, values, (error, results) => {
 					if (error) {
 						reject(error)
