@@ -2,7 +2,7 @@ module.exports = {
 	apps: [
 		{
 			name: 'applefarm',
-			script: 'ts-node', // or path to ts-node if not in PATH
+			script: '/usr/local/share/.config/yarn/global/node_modules/ts-node/dist/bin.js', // Use the full path to ts-node
 			args: 'index.ts',
 			instances: 1,
 			autorestart: true,
