@@ -7,13 +7,13 @@ import { RowDataPacket } from 'mysql2/promise'
 export class PostRepository implements ICreatePostsRepository {
 	public async createPost(dto: CreatePostDTO): Promise<PostDTO> {
 		const insertQuery = `
-		  INSERT INTO posts (sns_id, title, content, posting_password, images)
-		  VALUES (?, ?, ?, ?, ?)
+		  INSERT INTO posts (sns_id, user_id, title, content, posting_password, images)
+		  VALUES (?, ?, ?, ?, ?, ?)
 		`
 
 		const images = JSON.stringify(dto.images)
 
-		const values = [dto.sns_id, dto.title, dto.content, dto.posting_password, images]
+		const values = [dto.sns_id, dto.user_id, dto.title, dto.content, dto.posting_password, images]
 
 		try {
 			const insertResult = await new Promise<RowDataPacket>((resolve, reject) => {
