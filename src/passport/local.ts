@@ -2,7 +2,7 @@ require('dotenv').config()
 const { Strategy: LocalStrategy } = require('passport-local')
 import passport from 'passport'
 import bcrypt from 'bcrypt'
-import { userRepo } from '../routers'
+import { userRepository } from '../repositorys'
 import jwt from 'jsonwebtoken'
 
 module.exports = () => {
@@ -15,7 +15,7 @@ module.exports = () => {
 			},
 			async (email: string, password: string, done: any) => {
 				try {
-					const exUser = await userRepo.getUser(email)
+					const exUser = await userRepository.getUser(email)
 
 					if (exUser) {
 						const result = await bcrypt.compare(password, exUser.password!)

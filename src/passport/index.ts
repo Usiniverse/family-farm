@@ -1,5 +1,5 @@
 import passport from 'passport'
-import { userRepo } from '../routers'
+import { userRepository } from '../repositorys'
 import { UserDTO } from '../dtos/users/userDTO'
 const naver = require('./naver')
 const local = require('./local')
@@ -11,7 +11,7 @@ module.exports = () => {
 	})
 
 	passport.deserializeUser(function (id: number, done: any) {
-		userRepo
+		userRepository
 			.getUserById(id)
 			.then((user) => done(null, user))
 			.catch((err) => done(err))

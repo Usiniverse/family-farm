@@ -1,6 +1,6 @@
 import passport from 'passport'
 import { Strategy as NaverStrategy, Profile as NaverProfile } from 'passport-naver-v2'
-import { userRepo } from '../routers'
+import { userRepository } from '../repositorys'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -28,7 +28,7 @@ module.exports = () => {
 			},
 			async (accessToken: any, refreshToken: any, profile: IProfile, done: any) => {
 				try {
-					const exUser = await userRepo.getUser(profile.email)
+					const exUser = await userRepository.getUser(profile.email)
 
 					const secretKey = process.env.MY_KEY as string
 
@@ -69,7 +69,7 @@ module.exports = () => {
 							expiresIn: '14d',
 						})
 
-						const createUser = await userRepo.createUser({
+						const createUser = await userRepository.createUser({
 							email: profile.email,
 							sns_id: profile.id,
 							provider_data: { provider: 'naver' },
