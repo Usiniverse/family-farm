@@ -54,7 +54,9 @@ const appServer = async () => {
 		res.send('Hello World!')
 	})
 
-	app.get('/test', postController.getPosts)
+	app.get('/test', (req: Request, res: Response, next: NextFunction) => {
+		postController.getPosts
+	})
 
 	app.listen('8000', () => {
 		console.log(`
