@@ -2,13 +2,12 @@ import express, { Request, Response, NextFunction } from 'express'
 import { applefarmDB, client } from './shared/lib/db'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import { userRouter } from './src/routers/userRouter'
-import { postRouter } from './src/routers/postRouter'
 import passport from 'passport'
 import session from 'express-session'
 import dotenv from 'dotenv'
 import { indexRouter } from './src/routers/'
 import cookieParser from 'cookie-parser'
+import { postController } from './src/controllers'
 const passportConfig = require('./src/passport')
 dotenv.config()
 
@@ -54,6 +53,8 @@ const appServer = async () => {
 	app.get('/', (req: Request, res: Response, next: NextFunction) => {
 		res.send('Hello World!')
 	})
+
+	app.get('/test', postController.getPosts)
 
 	app.listen('8000', () => {
 		console.log(`
