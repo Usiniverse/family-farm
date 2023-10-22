@@ -80,7 +80,7 @@ export class PostController {
 			return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' })
 		}
 
-		return res.status(200).json(posts)
+		return res.send(posts)
 	}
 
 	// 게시글 수정하기
