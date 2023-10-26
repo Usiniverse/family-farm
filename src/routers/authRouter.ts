@@ -4,4 +4,4 @@ import { authController } from '../controllers'
 export const authRouter = express.Router()
 
 // 로그인
-authRouter.get('/login', authController.loginService)
+authRouter.get('/login', authController.login)

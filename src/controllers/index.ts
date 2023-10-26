@@ -1,6 +1,6 @@
 import { UserController } from './userController'
 import { PostController } from './postController'
-import { userService, postService, orderService, productService } from '../services'
+import { userService, postService, orderService } from '../services'
 import { AuthController } from './authController'
 import { OrderController } from './orderController'
 import { userRepository } from '../repositorys'

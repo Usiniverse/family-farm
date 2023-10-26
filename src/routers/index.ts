@@ -18,7 +18,7 @@ indexRouter.use('/auth', naverRouter)
 indexRouter.use('/posts', postRouter)
 
 // 로그인 등 권한 관리
-indexRouter.use('/auth', authRouter)
+indexRouter.use('/', authRouter)
 
 // 주문 관리
 indexRouter.use('/orders', orderRouter)
