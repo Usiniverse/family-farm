@@ -1,21 +1,15 @@
 import { UserController } from './userController'
 import { PostController } from './postController'
-import { userService, postService, orderService } from '../services'
-// import { AuthController } from './authController'
+import { userService, postService, orderService, authService } from '../services'
+import { AuthController } from './authController'
 import { OrderController } from './orderController'
 import { userRepository } from '../repositorys'
 import { ProductController } from './productController'
 
 const userController = new UserController(userService)
 const postController = new PostController(postService, userService)
-// const authController = new AuthController()
+const authController = new AuthController(authService)
 const orderController = new OrderController(userRepository, orderService)
 const productController = new ProductController(userRepository)
 
-export {
-	userController,
-	postController,
-	orderController,
-	productController,
-	// authController
-}
+export { userController, postController, authController, orderController, productController }
