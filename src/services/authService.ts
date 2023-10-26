@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
 export class AuthService {
-	public async loginService({ email, password }: LoginDTO) {
+	public async loginService({ email, password }: LoginDTO): Promise<any> {
 		try {
 			// 사용자 이메일로 사용자 정보 가져오기
 			const user = await userService.getUserByEmail({ email })
