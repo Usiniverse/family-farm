@@ -15,11 +15,11 @@ export class AuthService {
 			}
 
 			// bcrypt를 사용하여 비밀번호 검사
-			// const passwordMatch = await bcrypt.compare(password, user.password)
+			const passwordMatch = await bcrypt.compare(password, user.password)
 
-			// if (!passwordMatch) {
-			// 	throw new Error('비밀번호가 맞지 않습니다.')
-			// }
+			if (!passwordMatch) {
+				throw new Error('비밀번호가 맞지 않습니다.')
+			}
 
 			// jwt를 사용한 accessToken, refreshToken 생성
 			const accessToken = jwt.sign({ id: user.id }, process.env.MY_KEY, {

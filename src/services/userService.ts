@@ -30,6 +30,7 @@ export class UserService {
 		try {
 			const saltRounds = 10
 			const hashedPassword = await bcrypt.hash(password, saltRounds)
+			dto.password = hashedPassword
 
 			let isAdult = false
 
@@ -45,7 +46,7 @@ export class UserService {
 
 			const result = await this.userRepo.createUser({
 				email,
-				password: hashedPassword,
+				password,
 				is_adult: isAdult,
 				...dto,
 			})
