@@ -14,13 +14,19 @@ export class UserController {
 		this.userService = userService
 	}
 
-	public async createUserController(req: CustomExpressRequest, res: Response): Promise<UserDTO> {
+	public async createUserController(
+		req: CustomExpressRequest,
+		res: Response,
+	): Promise<UserDTO | any> {
 		const dto: CreateUserDTO = req.body as CreateUserDTO
+
+		if (dto.email === req.body.email) {
+			return res.status(200).json({ message: '이미 가입한 회원입니다.' })
+		}
 
 		const result = await userService.createUserService(dto)
 
-		res.json(result)
-		return result
+		return res.status(200).json(result)
 	}
 
 	public async getUserByEmail(req: CustomExpressRequest, res: Response): Promise<UserDTO> {
