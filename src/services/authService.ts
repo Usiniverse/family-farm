@@ -14,11 +14,14 @@ export class AuthService {
 				throw new Error('사용자를 찾을 수 없습니다.')
 			}
 
-			// bcrypt를 사용하여 비밀번호 검사
-			const passwordMatch = await bcrypt.compare(password, user.password)
+			// 비밀번호가 있으며 sns_id가 없는 사람 === 회원가입한 사람
+			if (password && !user.sns_id) {
+				// bcrypt를 사용하여 비밀번호 검사
+				const passwordMatch = await bcrypt.compare(password, user.password)
 
-			if (!passwordMatch) {
-				throw new Error('비밀번호가 맞지 않습니다.')
+				if (!passwordMatch) {
+					throw new Error('비밀번호가 맞지 않습니다.')
+				}
 			}
 
 			// jwt를 사용한 accessToken, refreshToken 생성
@@ -32,11 +35,7 @@ export class AuthService {
 			// 	expiresIn: '1d',
 			// })
 
-			// if (passwordMatch) {
 			return { user, accessToken }
-			// } else {
-			// return null
-			// }
 		} catch (error) {
 			throw error
 		}
