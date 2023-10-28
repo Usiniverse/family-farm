@@ -13,7 +13,7 @@ export class UserService {
 		this.userRepo = userRepo
 	}
 
-	public async createUserService(dto: CreateUserDTO): Promise<UserDTO> {
+	public async createUserService(dto: CreateUserDTO): Promise<UserDTO | any> {
 		const { email, password, birth, age } = dto as CreateUserDTO
 
 		// 이메일, 비밀번호 형식 체크
@@ -21,9 +21,8 @@ export class UserService {
 
 		const user = await this.userRepo.getUser(email)
 
-		// 가입된 유저라면 유저 정보 리턴
 		if (user) {
-			return user
+			return '이미 가입한 회원입니다.'
 		}
 
 		// 가입되지 않았을 경우 회원가입 진행
