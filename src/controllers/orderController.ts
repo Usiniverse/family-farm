@@ -2,7 +2,7 @@ import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 import { UserRepository } from '../repositorys/userRepository'
 import { OrderService } from '../services/orderService'
 import { orderService, userService } from '../services'
-import express from 'express'
+import express, { Response } from 'express'
 import { CreateOrderDTO } from '../dtos/orders/createOrderDTO'
 
 export class OrderController {
@@ -14,7 +14,7 @@ export class OrderController {
 		orderService = this.orderService
 	}
 
-	public async createOrder(req: CustomExpressRequest, res: express.Response) {
+	public async createOrder(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
 
 		const user = await userService.getUserById(user_id)
@@ -34,7 +34,7 @@ export class OrderController {
 		return res.status(201).json(result)
 	}
 
-	public async getOrder(req: CustomExpressRequest, res: express.Response) {
+	public async getOrder(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
 		const id = req.params.id
 		// 유저의 id와 주문의 id를 받아옴
@@ -44,7 +44,7 @@ export class OrderController {
 		return res.status(201).json(result)
 	}
 
-	public async getOrderHistoryByUserId(req: CustomExpressRequest, res: express.Response) {
+	public async getOrderHistoryByUserId(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
 
 		// 해당 유저의 전체 정보

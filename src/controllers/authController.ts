@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { Response } from 'express'
 import { AuthService } from '../services/authService'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 import { authService } from '../services'
@@ -10,7 +10,7 @@ export class AuthController {
 		this.authService = authService
 	}
 
-	public async login(req: CustomExpressRequest, res: express.Response) {
+	public async login(req: CustomExpressRequest, res: Response) {
 		const { email, password } = req.body
 
 		const result = await authService.loginService({ email, password })

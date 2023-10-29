@@ -2,7 +2,7 @@ import { UserService } from '../services/userService'
 import { userService, postService } from '../services'
 import { PostService } from '../services/postService'
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
-import express from 'express'
+import express, { Response } from 'express'
 // import { GetPostDTO } from '../dtos/posts/getPostDTO'
 
 export class PostController {
@@ -15,7 +15,7 @@ export class PostController {
 	}
 
 	// 게시글 작성
-	async createPosts(req: CustomExpressRequest, res: express.Response) {
+	async createPosts(req: CustomExpressRequest, res: Response) {
 		const { title, content, posting_password, images } = req.body
 		console.log('request::: ', req.body)
 		console.log('토큰정보 ::: ', req.auth)
@@ -45,7 +45,7 @@ export class PostController {
 	}
 
 	// 게시글 id로 조회하기
-	async getPost(req: CustomExpressRequest, res: express.Response) {
+	async getPost(req: CustomExpressRequest, res: Response) {
 		const post = await postService.getPost(+req.params.id)
 
 		if (!post) {
@@ -56,7 +56,7 @@ export class PostController {
 	}
 
 	// 유저아이디로 게시글 조회
-	async getPostsBySnsId(req: CustomExpressRequest, res: express.Response) {
+	async getPostsBySnsId(req: CustomExpressRequest, res: Response) {
 		const user = await userService.getUserById(req.auth.id)
 
 		if (!user) {
@@ -73,7 +73,7 @@ export class PostController {
 	}
 
 	// 전체 게시글 조회하기
-	async getPosts(req: CustomExpressRequest, res: express.Response) {
+	async getPosts(req: CustomExpressRequest, res: Response) {
 		const posts = await postService.getPosts()
 
 		if (!posts) {
@@ -84,7 +84,7 @@ export class PostController {
 	}
 
 	// 게시글 수정하기
-	async updatePost(req: CustomExpressRequest, res: express.Response) {
+	async updatePost(req: CustomExpressRequest, res: Response) {
 		const userId = req.auth.id
 		const postId = +req.params.id
 
@@ -111,7 +111,7 @@ export class PostController {
 	}
 
 	// 게시글 삭제하기
-	async deletePost(req: CustomExpressRequest, res: express.Response) {
+	async deletePost(req: CustomExpressRequest, res: Response) {
 		const postId = +req.params.id
 		const userId = req.auth.id
 
