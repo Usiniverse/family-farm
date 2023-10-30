@@ -1,12 +1,11 @@
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
 import { userRepository } from '../repositorys/index'
 
 const request = require('request-promise')
 
 export const naverCallback = async (req, res) => {
 	// code: 클라이언트에서 다시 전달받은 코드값
-	// state: 최초 클라이언트에서 발급받음. 정확한 이해 필요
+	// state: 각 클라이언트마다 state가 다름
 	const code = req.query.code
 	const state = 'c5db2fc8-f965-4789-9197-857ce81c60f6'
 
@@ -16,7 +15,6 @@ export const naverCallback = async (req, res) => {
 
 	// 로그인 API를 사용해 access token을 발급받는다.
 	const naver_api_url = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&response_type=code&client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectURI}&code=${code}&state=${state}`
-	console.log('naver_api_url::: ', naver_api_url)
 
 	const options = {
 		url: naver_api_url,
@@ -29,8 +27,6 @@ export const naverCallback = async (req, res) => {
 	// string 형태로 값이 담기니 JSON 형식으로 parse를 해줘야 한다.
 	const token = JSON.parse(result).access_token
 
-	console.log('token:::', token)
-
 	// 발급 받은 access token을 사용해 회원 정보 조회 API를 사용한다.
 	const info_options = {
 		url: 'https://openapi.naver.com/v1/nid/me',
@@ -40,7 +36,6 @@ export const naverCallback = async (req, res) => {
 	const info_result = await request.get(info_options)
 
 	const info_result_json = JSON.parse(info_result).response
-	console.log('info_result_json ::: ', info_result_json)
 
 	try {
 		const existUser = await userRepository.getUserBySnsId(info_result_json.id)

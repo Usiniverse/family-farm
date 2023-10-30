@@ -1,6 +1,5 @@
 import passport from 'passport'
 import { userRepository } from '../repositorys'
-import { UserDTO } from '../dtos/users/userDTO'
 const naver = require('./naver')
 const local = require('./local')
 
