@@ -12,12 +12,9 @@ export class AuthController {
 	}
 
 	public async login(req: CustomExpressRequest, res: Response) {
-		const dto: LoginDTO = {
-			email: req.query.email,
-			password: req.query.password,
-		} as LoginDTO
+		const { email, password } = req.body
 
-		const result = await authService.loginService({ ...dto })
+		const result = await authService.loginService({ email, password })
 
 		return res.status(200).json(result)
 	}
