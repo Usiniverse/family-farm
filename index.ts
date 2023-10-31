@@ -7,7 +7,6 @@ import session from 'express-session'
 import dotenv from 'dotenv'
 import { indexRouter } from './src/routers/'
 import cookieParser from 'cookie-parser'
-import { postController } from './src/controllers'
 const passportConfig = require('./src/passport')
 dotenv.config()
 
