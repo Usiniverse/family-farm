@@ -7,47 +7,25 @@ import { DeletePostDTO } from '../dtos/posts/deletePostDTO'
 
 export class PostService {
 	private postsRepository: ICreatePostsRepository
-	// private userRepository: UserRepository
 
-	constructor(
-		postsRepository: ICreatePostsRepository,
-		//  userRepository: UserRepository
-	) {
+	constructor(postsRepository: ICreatePostsRepository) {
 		this.postsRepository = postsRepository
-		// this.userRepository = userRepository;
 	}
 
 	public async createPost(dto: CreatePostDTO): Promise<PostDTO> {
-		const { title, posting_password, content, sns_id, user_id, images } = dto
+		const { title, content, sns_id, user_id, images } = dto
 
 		if (!title) {
 			throw new Error('제목을 입력해주세요')
 		}
 
-		// 최대 8자리의 숫자만 허용하는 정규식
-		const passwordRegex = /^\d{1,8}$/
-
-		// 비밀번호 검증
-		const isValidPassword = passwordRegex.test(posting_password)
-
-		if (isValidPassword) {
-			// 비밀번호가 유효해야 함. 운영자만 글 쓰기 기능 추가해야함
-			console.log('비밀번호가 유효합니다.')
-		} else {
-			// 비밀번호가 숫자가 아닐 경우 에러 처리
-			console.log('비밀번호가 유효하지 않습니다.')
-		}
-
-		const post = await this.postsRepository.createPost({
+		return await this.postsRepository.createPost({
 			title,
-			posting_password,
 			content,
 			images,
 			sns_id,
 			user_id,
 		})
-
-		return post
 	}
 
 	public async getPost(id: number): Promise<PostDTO> {

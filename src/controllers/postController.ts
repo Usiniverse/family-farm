@@ -16,9 +16,7 @@ export class PostController {
 
 	// 게시글 작성
 	async createPosts(req: CustomExpressRequest, res: Response) {
-		const { title, content, posting_password, images } = req.body
-		console.log('request::: ', req.body)
-		console.log('토큰정보 ::: ', req.auth)
+		const { title, content, images } = req.body
 
 		const user = await userService.getUserById(req.auth.id)
 
@@ -31,7 +29,6 @@ export class PostController {
 		const post = await postService.createPost({
 			title,
 			content,
-			posting_password,
 			images,
 			sns_id: user.sns_id,
 			user_id: userId,
@@ -86,22 +83,25 @@ export class PostController {
 	// 게시글 수정하기
 	async updatePost(req: CustomExpressRequest, res: Response) {
 		const userId = req.auth.id
-		const postId = +req.params.id
+		const id = +req.params.id
 
-		const getPost = await postService.getPost(postId)
+		const getPost = await postService.getPost(id)
 
 		if (!getPost) {
 			return res.status(400).json({ message: '게시글을 찾을 수 없습니다.' })
 		} else if (userId !== getPost.user_id) {
 			return res.status(400).json({ message: '작성자가 아닙니다.' })
-		} else if (postId !== getPost.id) {
+		} else if (id !== getPost.id) {
 			return res.status(400).json({ message: '유저가 작성한 게시글이 아닙니다.' })
 		}
 
-		const { title, content, posting_password, images } = req.body
 		const post = await postService.updatePost({
 			...req.body,
+			id,
+			userId,
 		})
+
+		console.log('게시글::: ', post)
 
 		if (!post) {
 			return res.status(400).json({ message: '게시글을 수정할 수 없습니다.' })
