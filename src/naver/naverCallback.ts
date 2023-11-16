@@ -24,6 +24,8 @@ export const naverCallback = async (req, res) => {
 		},
 	}
 	const result = await request.get(options)
+	console.log('result :::', result)
+
 	// string 형태로 값이 담기니 JSON 형식으로 parse를 해줘야 한다.
 	const token = JSON.parse(result).access_token
 
@@ -36,6 +38,7 @@ export const naverCallback = async (req, res) => {
 	const info_result = await request.get(info_options)
 
 	const info_result_json = JSON.parse(info_result).response
+	console.log(info_result_json)
 
 	try {
 		const existUser = await userRepository.getUserBySnsId(info_result_json.id)

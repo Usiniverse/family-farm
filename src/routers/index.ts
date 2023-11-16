@@ -5,6 +5,7 @@ import { postRouter } from './postRouter'
 import { authRouter } from './authRouter'
 import { orderRouter } from './orderRouter'
 import { productRouter } from './productRouter'
+import { commentRouter } from './commentRouter'
 
 const indexRouter = Router()
 
@@ -14,8 +15,8 @@ indexRouter.use('/users', userRouter)
 // 네이버 로그인 관리
 indexRouter.use('/auth', naverRouter)
 
-// 게시글 관리
-indexRouter.use('/posts', postRouter)
+// 게시글 관리, 댓글 관리
+indexRouter.use('/posts', postRouter, commentRouter)
 
 // 로그인 등 권한 관리
 indexRouter.use('/', authRouter)
