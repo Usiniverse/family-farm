@@ -7,7 +7,7 @@ export class CommentController {
 	public async createComment(req: CustomExpressRequest, res: express.Response) {
 		const user_id = req.auth.id
 		const post_id = +req.params.id
-		const { contents } = req.body
+		const contents = req.body.contents
 
 		const dto: CreateCommentDTO = { user_id, post_id, contents }
 
