@@ -1,5 +1,6 @@
 export interface UserDTO {
 	id?: number
+	uid: string
 	sns_id: string
 	email: string
 	name?: string
@@ -8,7 +9,7 @@ export interface UserDTO {
 	phone?: string
 	picture?: string
 	birth?: string
-	is_adult?: boolean
+	is_adult?: string
 	options?: object
 	provider_data?: {
 		provider: string

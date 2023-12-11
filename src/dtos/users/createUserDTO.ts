@@ -13,7 +13,7 @@ export interface CreateUserDTO {
 	phone?: string
 	birth?: string
 	gender?: string
-	is_adult?: boolean
+	is_adult?: string
 	age?: string
 	birthday?: string
 }

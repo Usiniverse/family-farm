@@ -26,15 +26,13 @@ export class UserService {
 			return '이미 가입한 회원입니다.'
 		}
 
-		const uid = uuidv4()
-
 		// 가입되지 않았을 경우 회원가입 진행
 		try {
 			const saltRounds = 10
 			const hashedPassword = await bcrypt.hash(password, saltRounds)
 			dto.password = hashedPassword
 
-			let isAdult = false
+			let isAdult = '성인 인증 되지 않음'
 
 			if (birth) {
 				const currentDate = new Date()
@@ -42,9 +40,14 @@ export class UserService {
 				const ageDiff = currentDate.getFullYear() - birthDate.getFullYear()
 
 				if (ageDiff >= 19 || +age >= 19) {
-					isAdult = true
+					isAdult = '성인'
+				} else {
+					isAdult = '미성년자'
 				}
 			}
+			console.log('성인인가요?? ::: ', isAdult)
+
+			const uid = uuidv4()
 
 			const result = await this.userRepo.createUser({
 				email,
