@@ -8,4 +8,6 @@ productRouter.post('/', checkedUser, productController.createProduct)
 
 productRouter.get('/:id', productController.getProduct)
 
-productRouter.get('/', checkedUser, productController.getProductsByUserId)
+// productRouter.get('/', checkedUser, productController.getProductsByUserId)
+
+productRouter.get('/', productController.getProducts)

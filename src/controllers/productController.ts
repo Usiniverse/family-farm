@@ -29,10 +29,16 @@ export class ProductController {
 		return res.status(200).send(result)
 	}
 
-	public async getProductsByUserId(req: CustomExpressRequest, res: Response) {
-		const user_id = req.auth.id
+	// public async getProductsByUserId(req: CustomExpressRequest, res: Response) {
+	// 	const user_id = req.auth.id
 
-		const result = await productService.getProductsByUserId(user_id)
+	// 	const result = await productService.getProductsByUserId(user_id)
+
+	// 	return res.status(200).send(result)
+	// }
+
+	public async getProducts(req: CustomExpressRequest, res: Response) {
+		const result = await productService.getProducts()
 
 		return res.status(200).send(result)
 	}

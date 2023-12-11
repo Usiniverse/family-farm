@@ -1,3 +1,4 @@
+import { CreateProductDTO } from '../dtos/products/createProductDTO'
 import { ProductDTO } from '../dtos/products/productDTO'
 import { ProductRepository } from '../repositorys/productRepository'
 
@@ -8,7 +9,7 @@ export class ProductService {
 		this.productRepository = productRepository
 	}
 
-	public async createProduct(dto): Promise<ProductDTO> {
+	public async createProduct(dto: CreateProductDTO): Promise<ProductDTO> {
 		const result = await this.productRepository.createProduct(dto)
 
 		return result
@@ -20,8 +21,14 @@ export class ProductService {
 		return result
 	}
 
-	public async getProductsByUserId(user_id: number): Promise<ProductDTO[]> {
-		const result = await this.productRepository.getProductsByUserId(user_id)
+	// public async getProductsByUserId(user_id: number): Promise<ProductDTO[]> {
+	// 	const result = await this.productRepository.getProductsByUserId(user_id)
+
+	// 	return result
+	// }
+
+	public async getProducts(): Promise<ProductDTO[]> {
+		const result = await this.productRepository.getProducts()
 
 		return result
 	}
