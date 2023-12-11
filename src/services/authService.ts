@@ -1,6 +1,5 @@
 import { userService } from '../services'
 import { LoginDTO } from '../dtos/auth/LoginDTO'
-import { UserDTO } from '../dtos/users/userDTO'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 

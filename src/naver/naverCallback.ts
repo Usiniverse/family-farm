@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { userRepository } from '../repositorys/index'
+import { v4 as uuidv4 } from 'uuid'
 
 const request = require('request-promise')
 
@@ -44,6 +45,8 @@ export const naverCallback = async (req, res) => {
 		const existUser = await userRepository.getUserBySnsId(info_result_json.id)
 
 		const secretKey = process.env.MY_KEY as string
+
+		const uid = uuidv4()
 		// 기존회원 > 리턴, 신규회원 > 회원가입 후 리턴
 		// 토큰 발급
 		if (existUser) {
@@ -54,8 +57,9 @@ export const naverCallback = async (req, res) => {
 
 			res.send({ existUser, accessToken })
 		} else {
-			await userRepository.createUser({
+			const user = await userRepository.createUser({
 				email: info_result_json.email,
+				uid,
 				provider_data: {
 					provider: 'naver',
 				},
@@ -70,14 +74,14 @@ export const naverCallback = async (req, res) => {
 				birthday: info_result_json.birthday,
 			})
 
-			const getUser = await userRepository.getUserBySnsId(info_result_json.id)
+			// const getUser = await userRepository.getUserBySnsId(info_result_json.id)
 
-			const accessToken = jwt.sign({ id: getUser.id }, secretKey, {
+			const accessToken = jwt.sign({ id: user.id }, secretKey, {
 				algorithm: 'HS256',
 				expiresIn: '1d',
 			})
 
-			res.send({ getUser, accessToken })
+			res.send({ user, accessToken })
 		}
 	} catch (error) {
 		console.log(error)

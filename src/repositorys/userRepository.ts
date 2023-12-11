@@ -8,11 +8,12 @@ export class UserRepository implements IUserRepository {
 	async createUser(dto: CreateUserDTO): Promise<UserDTO> {
 		const query = `
 			INSERT INTO users 
-			(sns_id, email, name, birth, birthday, age, nickname, gender, password, phone, picture, is_adult) 
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			(uid, sns_id, email, name, birth, birthday, age, nickname, gender, password, phone, picture, is_adult) 
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`
 
 		const values = [
+			dto.uid,
 			dto.sns_id,
 			dto.email,
 			dto.name,

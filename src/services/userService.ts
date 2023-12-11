@@ -5,6 +5,7 @@ import { GetUserDTO } from '../dtos/users/getUserDTO'
 import { registerSchema, alreadyEmailSchema } from '../../shared/lib/validator'
 import bcrypt from 'bcrypt'
 import { UpdateUserDTO } from '../dtos/users/updateUserDTO'
+import { v4 as uuidv4 } from 'uuid'
 
 export class UserService {
 	private userRepo: UserRepository
@@ -24,6 +25,8 @@ export class UserService {
 		if (user) {
 			return '이미 가입한 회원입니다.'
 		}
+
+		const uid = uuidv4()
 
 		// 가입되지 않았을 경우 회원가입 진행
 		try {
@@ -45,6 +48,7 @@ export class UserService {
 
 			const result = await this.userRepo.createUser({
 				email,
+				uid,
 				password,
 				is_adult: isAdult,
 				...dto,

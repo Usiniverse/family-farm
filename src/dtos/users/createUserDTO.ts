@@ -1,5 +1,6 @@
 export interface CreateUserDTO {
 	email: string
+	uid: string
 	user_id?: number
 	password?: string
 	provider_data?: {
