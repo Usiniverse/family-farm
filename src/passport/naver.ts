@@ -3,6 +3,7 @@ import { Strategy as NaverStrategy, Profile as NaverProfile } from 'passport-nav
 import { userRepository } from '../repositorys'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { v4 as uuidv4 } from 'uuid'
 dotenv.config()
 
 export interface IProfile {
@@ -32,6 +33,7 @@ module.exports = () => {
 
 					const secretKey = process.env.MY_KEY as string
 
+					const uid = uuidv4()
 					// 이미 가입된 네이버 프로필이면 성공
 					if (exUser) {
 						const accessToken = jwt.sign({ id: exUser.id }, secretKey, {
@@ -71,6 +73,7 @@ module.exports = () => {
 
 						const createUser = await userRepository.createUser({
 							email: profile.email,
+							uid,
 							sns_id: profile.id,
 							provider_data: { provider: 'naver' },
 							nickname: profile.nickname,

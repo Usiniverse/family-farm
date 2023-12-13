@@ -3,14 +3,6 @@ import * as dotenv from 'dotenv'
 import mysql from 'mysql'
 dotenv.config()
 
-export const client = new Client({
-	host: process.env.POSTGRESQL_HOST,
-	database: process.env.POSTGRESQL_DATABASE,
-	user: process.env.POSTGRESQL_USER,
-	password: process.env.POSTGRESQL_PASSWORD,
-	port: Number(process.env.POSTGRESQL_PORT) || 5432,
-})
-
 export const connection = mysql.createConnection({
 	host: process.env.MYSQL_HOST,
 	user: process.env.MYSQL_USER,
