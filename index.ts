@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express'
-import { applefarmDB, client } from './shared/lib/db'
+import { applefarmDB } from './shared/lib/db'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import passport from 'passport'
