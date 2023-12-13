@@ -1,6 +1,5 @@
 import { CreateOrderDTO } from '../dtos/orders/createOrderDTO'
 import { OrderDTO } from '../dtos/orders/orderDTO'
-import { client } from '../../shared/lib/db'
 import { UpdateOrderDTO } from '../dtos/orders/updateOrderDTO'
 import { connection } from '../../shared/lib/db'
 import { RowDataPacket } from 'mysql2/promise'
