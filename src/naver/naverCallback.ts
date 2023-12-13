@@ -8,7 +8,7 @@ export const naverCallback = async (req, res) => {
 	// code: 클라이언트에서 다시 전달받은 코드값
 	// state: 각 클라이언트마다 state가 다름
 	const code = req.query.code
-	const state = 'c5db2fc8-f965-4789-9197-857ce81c60f6'
+	const state = req.query.state
 
 	const clientId = process.env.NAVER_ID as string
 	const clientSecret = process.env.NAVER_SECRET as string

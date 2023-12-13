@@ -45,7 +45,6 @@ export class UserService {
 					isAdult = '미성년자'
 				}
 			}
-			console.log('성인인가요?? ::: ', isAdult)
 
 			const uid = uuidv4()
 
