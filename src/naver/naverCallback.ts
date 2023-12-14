@@ -12,10 +12,17 @@ export const naverCallback = async (req, res) => {
 
 	const clientId = process.env.NAVER_ID as string
 	const clientSecret = process.env.NAVER_SECRET as string
-	const redirectURI = encodeURI('http://localhost:8000/auth/naver/callback')
+	// const redirectURI = encodeURI('http://localhost:8000/auth/naver/callback')
+	const redirectURI = encodeURI('https://familyfarm.co.kr/auth/naver/callback')
 
 	// 로그인 API를 사용해 access token을 발급받는다.
-	const naver_api_url = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&response_type=code&client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectURI}&code=${code}&state=${state}`
+	const naver_api_url = `https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&response_type=code
+		&client_id=${clientId}
+		&client_secret=${clientSecret}
+		&redirect_uri=${redirectURI}
+		&code=${code}
+		&state=${state}
+	`
 
 	const options = {
 		url: naver_api_url,
