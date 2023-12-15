@@ -16,6 +16,9 @@ export const naverCallback = async (req, res) => {
 	const code = req.query.code
 	const state = req.query.state
 	console.log('code랑 state 찾기', req.query)
+	console.log('code랑 state 찾기 ::: params', req.params)
+	console.log('code랑 state 찾기 ::: body', req.body)
+	console.log('code랑 state 찾기 ::: 그냥 통짜 req', req)
 
 	console.log('프론트에서 받은 code :::', code)
 	console.log('프론트에서 받은 code :::', state)
