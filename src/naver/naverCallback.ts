@@ -4,11 +4,21 @@ import { v4 as uuidv4 } from 'uuid'
 
 const request = require('request-promise')
 
+/**
+ * 1. 로그인 창에서 id, password 입력 후 로그인
+ * 2. 정보제공동의 창
+ * 3. 생성된 state, code값 추출 후 백으로(/auth/naver/callback)
+ * 4. naver_api_url < 여기다가 애플리케이션 아이디, 시크릿키
+ */
 export const naverCallback = async (req, res) => {
 	// code: 클라이언트에서 다시 전달받은 코드값
 	// state: 각 클라이언트마다 state가 다름
 	const code = req.query.code
 	const state = req.query.state
+	console.log('프론트에서 받은 code :::', code)
+	console.log('프론트에서 받은 code :::', state)
+
+	// const state = 'c5db2fc8-f965-4789-9197-857ce81c60f6'
 
 	const clientId = process.env.NAVER_ID as string
 	const clientSecret = process.env.NAVER_SECRET as string
@@ -24,6 +34,8 @@ export const naverCallback = async (req, res) => {
 		&state=${state}
 	`
 
+	console.log('얘가 없다는데요???', clientId, clientSecret)
+
 	const options = {
 		url: naver_api_url,
 		headers: {
@@ -36,6 +48,7 @@ export const naverCallback = async (req, res) => {
 
 	// string 형태로 값이 담기니 JSON 형식으로 parse를 해줘야 한다.
 	const token = JSON.parse(result).access_token
+	console.log('naver token::: ', token)
 
 	// 발급 받은 access token을 사용해 회원 정보 조회 API를 사용한다.
 	const info_options = {
@@ -46,7 +59,7 @@ export const naverCallback = async (req, res) => {
 	const info_result = await request.get(info_options)
 
 	const info_result_json = JSON.parse(info_result).response
-	console.log(info_result_json)
+	// console.log(info_result_json)
 
 	try {
 		const existUser = await userRepository.getUserBySnsId(info_result_json.id)
@@ -91,7 +104,7 @@ export const naverCallback = async (req, res) => {
 			res.send({ user, accessToken })
 		}
 	} catch (error) {
-		console.log(error)
+		console.log('네이버 로그인 실패')
 		return
 	}
 }
