@@ -38,7 +38,7 @@ export const naverCallback = async (req: Request, res: Response) => {
 	const info_result = await axios({
 		method: 'get',
 		url: 'https://openapi.naver.com/v1/nid/me',
-		headers: { Authorization: 'Bearer ' + result.data.access_token },
+		headers: { Authorization: `Bearer ${result.data.access_token}` },
 	})
 
 	const info_result_json = info_result.data.response
