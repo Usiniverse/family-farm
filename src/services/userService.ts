@@ -6,6 +6,7 @@ import { registerSchema, alreadyEmailSchema } from '../../shared/lib/validator'
 import bcrypt from 'bcrypt'
 import { UpdateUserDTO } from '../dtos/users/updateUserDTO'
 import { v4 as uuidv4 } from 'uuid'
+import jwt from 'jsonwebtoken'
 
 export class UserService {
 	private userRepo: UserRepository
@@ -57,7 +58,16 @@ export class UserService {
 				...dto,
 			})
 
-			return result
+			if (!result) {
+				return '회원가입 에러'
+			}
+
+			const accessToken = jwt.sign({ id: result.id }, process.env.MY_KEY, {
+				algorithm: 'HS256',
+				expiresIn: '1d',
+			})
+
+			return { result, accessToken }
 		} catch (error) {
 			throw error
 		}
