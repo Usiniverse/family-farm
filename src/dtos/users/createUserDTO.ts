@@ -16,4 +16,5 @@ export interface CreateUserDTO {
 	is_adult?: string
 	age?: string
 	birthday?: string
+	address?: string
 }

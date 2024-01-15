@@ -41,6 +41,10 @@ export const naverCallback = async (req: Request, res: Response) => {
 		headers: { Authorization: `Bearer ${result.data.access_token}` },
 	})
 
+	// const info_result = await axios.get('https://openapi.naver.com/v1/nid/me', {
+	// 	headers: { Authorization: `Bearer ${result.data.access_token}` },
+	// })
+
 	const info_result_json = info_result.data.response
 	console.log('네이버 회원정보 조회까지 마침', info_result_json)
 

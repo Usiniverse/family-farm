@@ -15,7 +15,7 @@ export class UserService {
 	}
 
 	public async createUserService(dto: CreateUserDTO): Promise<UserDTO | any> {
-		const { email, password, birth, age } = dto as CreateUserDTO
+		const { email, password, birth, age, address } = dto as CreateUserDTO
 
 		// 이메일, 비밀번호 형식 체크
 		await registerSchema.validateAsync({ email, password })
@@ -53,6 +53,7 @@ export class UserService {
 				uid,
 				password,
 				is_adult: isAdult,
+				address,
 				...dto,
 			})
 
