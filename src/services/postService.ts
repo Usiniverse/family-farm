@@ -19,17 +19,25 @@ export class PostService {
 			throw new Error('제목을 입력해주세요')
 		}
 
-		return await this.postsRepository.createPost({
+		const post = await this.postsRepository.createPost({
 			title,
 			content,
 			images,
 			sns_id,
 			user_id,
 		})
+
+		console.log('게시글 생성됨::: ', post)
+
+		return post
 	}
 
 	public async getPost(id: number): Promise<PostDTO> {
-		return await this.postsRepository.getPost(id)
+		const post = await this.postsRepository.getPost(id)
+
+		console.log('post :::', post)
+
+		return post
 	}
 
 	public async getPosts(): Promise<PostDTO[]> {

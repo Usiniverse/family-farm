@@ -1,6 +1,8 @@
 import { CreateOrderDTO } from '../dtos/orders/createOrderDTO'
 import { OrderDTO } from '../dtos/orders/orderDTO'
 import { IOrderRepository } from '../repositorys/orderRepository'
+import { productService } from '../services'
+import { ServiceError } from '../../shared/error/error'
 
 export class OrderService {
 	private orderRepository: IOrderRepository
@@ -9,11 +11,19 @@ export class OrderService {
 		this.orderRepository = orderRepository
 	}
 
-	public async createOrder(dto: CreateOrderDTO): Promise<OrderDTO> {
-		// 1. 상품 페이지
-		// 2. 상품 선택 후 주문 요청 버튼 클릭
-		// 상품 정보를 가져와서 body로 넘김
-		// 다시 상품 조회할 필요 없음
+	public async createOrder(dto: CreateOrderDTO): Promise<OrderDTO | ServiceError> {
+		const product = await productService.getProduct(dto.product_id)
+
+		if (!product) {
+			return { message: '상품을 찾을 수 없습니다.' }
+		}
+
+		const order = await this.orderRepository.getOrderHistoryByUserId(dto.user_id)
+
+		if (!dto.target_address) {
+			dto.target_address = order[0].target_address
+		}
+
 		const result = await this.orderRepository.createOrder(dto)
 
 		return result

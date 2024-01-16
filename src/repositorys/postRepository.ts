@@ -2,9 +2,24 @@ import { PostDTO } from '../dtos/posts/postDTO'
 import { CreatePostDTO } from '../dtos/posts/createPostDTO'
 import { UpdatePostDTO } from '../dtos/posts/updatePostDTO'
 import { connection } from '../../shared/lib/db'
-import { RowDataPacket } from 'mysql2/promise'
 
 export class PostRepository implements ICreatePostsRepository {
+	public mapRowToPostDTO(row: any): PostDTO {
+		return {
+			id: row.id,
+			title: row.title,
+			content: row.content,
+			user_id: row.user_id,
+			posting_password: row.posting_password,
+			images: {
+				img_url: row.img_url,
+			},
+			options: row.options,
+			created_at: row.created_at,
+			updated_at: row.updated_at,
+		}
+	}
+
 	public async createPost(dto: CreatePostDTO): Promise<PostDTO> {
 		const insertQuery = `
 		  INSERT INTO posts (sns_id, user_id, title, content, images)
@@ -16,12 +31,12 @@ export class PostRepository implements ICreatePostsRepository {
 		const values = [dto.sns_id, dto.user_id, dto.title, dto.content, images]
 
 		try {
-			const result = await new Promise<RowDataPacket>((resolve, reject) => {
+			const result = await new Promise((resolve, reject) => {
 				connection.query(insertQuery, values, (error, results) => {
 					if (error) {
 						reject(error)
 					} else {
-						resolve(results)
+						resolve(results.insertId)
 					}
 				})
 			})
@@ -29,16 +44,16 @@ export class PostRepository implements ICreatePostsRepository {
 			const selectQuery = `SELECT * FROM posts WHERE id = ?`
 
 			const selectResult = await new Promise((resolve, reject) => {
-				connection.query(selectQuery, [result.insertId], (selectError, selectResults) => {
+				connection.query(selectQuery, [result], (selectError, selectResults) => {
 					if (selectError) {
 						reject(selectError)
 					} else {
-						resolve(selectResults)
+						resolve(this.mapRowToPostDTO(selectResults[0]))
 					}
 				})
 			})
 
-			return selectResult[0] as PostDTO
+			return selectResult as PostDTO
 		} catch (e) {
 			console.error(e)
 			throw e
@@ -60,7 +75,7 @@ export class PostRepository implements ICreatePostsRepository {
 				})
 			})
 
-			return result[0] as PostDTO
+			return this.mapRowToPostDTO(result[0])
 		} catch (e) {
 			console.error(e)
 			throw e
