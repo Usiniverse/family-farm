@@ -10,14 +10,15 @@ export class OrderRepository implements IOrderRepository {
 			user_id: row.user_id,
 			target_address: row.target_address,
 			product_id: row.product_id,
+			order_count: row.order_count,
 			created_at: row.created_at,
 			updated_at: row.updated_at,
 		}
 	}
 
 	public async createOrder(dto: CreateOrderDTO): Promise<OrderDTO> {
-		const query = `INSERT INTO orders (user_id, target_address, product_id) VALUES (?, ?, ?)`
-		const values = [dto.user_id, dto.target_address, dto.product_id]
+		const query = `INSERT INTO orders (user_id, target_address, product_id, order_count) VALUES (?, ?, ?, ?)`
+		const values = [dto.user_id, dto.target_address, dto.product_id, dto.order_count]
 
 		try {
 			const insertResult = await new Promise((resolve, reject) => {
@@ -96,8 +97,8 @@ export class OrderRepository implements IOrderRepository {
 	}
 
 	public async updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO> {
-		const query = `UPDATE orders SET user_id = ?, content = ? WHERE id = ?`
-		const values = [dto.user_id, dto.target_address, dto.id]
+		const query = `UPDATE orders SET user_id = ?, content = ? WHERE id = ? order_count = ?`
+		const values = [dto.user_id, dto.target_address, dto.id, dto.order_count]
 
 		try {
 			const insertResult = await new Promise((resolve, reject) => {

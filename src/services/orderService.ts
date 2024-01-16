@@ -18,15 +18,27 @@ export class OrderService {
 			return { message: '상품을 찾을 수 없습니다.' }
 		}
 
-		const order = await this.orderRepository.getOrderHistoryByUserId(dto.user_id)
+		const orderHistory = await this.orderRepository.getOrderHistoryByUserId(dto.user_id)
 
+		// 주소가 없다면 이전 주소를 입력
 		if (!dto.target_address) {
-			dto.target_address = order[0].target_address
+			dto.target_address = orderHistory[0].target_address
 		}
 
-		const result = await this.orderRepository.createOrder(dto)
+		// 이전에 1번이라도 주문한 적이 있다면 주문횟수를 1 더하기
+		if (orderHistory.length > 0) {
+			dto.order_count = orderHistory[0].order_count + 1
+		} else {
+			dto.order_count = 1
+		}
 
-		return result
+		try {
+			const result = await this.orderRepository.createOrder(dto)
+			return result
+		} catch (error) {
+			console.error(error)
+			throw error
+		}
 	}
 
 	public async getOrder(id: number): Promise<OrderDTO> {

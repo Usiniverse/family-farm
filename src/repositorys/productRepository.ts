@@ -107,7 +107,7 @@ export class ProductRepository implements IProductRepository {
 	}
 }
 
-interface IProductRepository {
+export interface IProductRepository {
 	createProduct(dto: CreateProductDTO): Promise<ProductDTO>
 	getProduct(id: number): Promise<ProductDTO>
 	// getProductsByUserId(user_id: number): Promise<ProductDTO[]>
