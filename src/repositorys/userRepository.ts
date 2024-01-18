@@ -103,8 +103,6 @@ export class UserRepository implements IUserRepository {
 	}
 
 	async getUserBySnsId(sns_id: string): Promise<UserDTO> {
-		console.log('유저아이디 찾아보기', sns_id)
-
 		const query = `SELECT * FROM users WHERE sns_id = ?`
 		const values = [sns_id]
 

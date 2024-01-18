@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken'
 import { userRepository } from '../repositorys/index'
 import { v4 as uuidv4 } from 'uuid'
-import { Request, Response } from 'express'
+import express, { Request, Response } from 'express'
 import axios from 'axios'
+import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 
 /**
  * 1. 로그인 창에서 id, password 입력 후 로그인
@@ -10,7 +11,7 @@ import axios from 'axios'
  * 3. 생성된 state, code값 추출 후 백으로(/auth/naver/callback)
  * 4. naver_api_url < 여기다가 애플리케이션 아이디, 시크릿키
  */
-export const naverCallback = async (req: Request, res: Response) => {
+export const naverCallback = async (req: CustomExpressRequest, res: Response) => {
 	// code: 클라이언트에서 다시 전달받은 코드값
 	// state: 각 클라이언트마다 state가 다름
 	const code = req.query.code
@@ -41,15 +42,13 @@ export const naverCallback = async (req: Request, res: Response) => {
 		headers: { Authorization: `Bearer ${result.data.access_token}` },
 	})
 
-	// const info_result = await axios.get('https://openapi.naver.com/v1/nid/me', {
-	// 	headers: { Authorization: `Bearer ${result.data.access_token}` },
-	// })
-
 	const info_result_json = info_result.data.response
 	console.log('네이버 회원정보 조회까지 마침', info_result_json)
 
 	try {
 		const existUser = await userRepository.getUserBySnsId(info_result_json.id)
+		console.log(existUser)
+
 		const secretKey = process.env.MY_KEY as string
 
 		const uid = uuidv4()
@@ -63,6 +62,8 @@ export const naverCallback = async (req: Request, res: Response) => {
 
 			res.send({ existUser, accessToken })
 		} else {
+			console.log('잘 넘어가네?')
+
 			const user = await userRepository.createUser({
 				email: info_result_json.email,
 				uid,
@@ -85,10 +86,10 @@ export const naverCallback = async (req: Request, res: Response) => {
 				expiresIn: '1d',
 			})
 
-			res.send({ user, accessToken })
+			res.status(201).send({ user, accessToken })
 		}
 	} catch (error) {
-		console.log('네이버 로그인 실패')
+		console.error('네이버 로그인 실패', error)
 		return
 	}
 }
