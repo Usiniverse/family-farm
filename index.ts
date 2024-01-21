@@ -47,6 +47,9 @@ const appServer = async () => {
 	app.use(passport.initialize())
 	app.use(passport.session())
 
+	const { swaggerUi, specs } = require('./swagger/swagger')
+	app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
+
 	app.use('/', indexRouter)
 
 	app.get('/', (req: Request, res: Response, next: NextFunction) => {
