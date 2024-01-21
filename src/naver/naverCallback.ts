@@ -62,8 +62,6 @@ export const naverCallback = async (req: CustomExpressRequest, res: Response) =>
 
 			res.send({ existUser, accessToken })
 		} else {
-			console.log('잘 넘어가네?')
-
 			const user = await userRepository.createUser({
 				email: info_result_json.email,
 				uid,

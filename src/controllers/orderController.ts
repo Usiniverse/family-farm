@@ -1,7 +1,7 @@
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
 import { UserRepository } from '../repositorys/userRepository'
 import { OrderService } from '../services/orderService'
-import { orderService, productService, userService } from '../services'
+import { orderService } from '../services'
 import express, { Response } from 'express'
 import { CreateOrderDTO } from '../dtos/orders/createOrderDTO'
 
@@ -17,15 +17,6 @@ export class OrderController {
 	public async createOrder(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
 		const product_id = req.body.product_id
-
-		const user = await userService.getUserById(user_id)
-		let address = ''
-
-		if (!user.address) {
-			return res.status(400).json({ message: '주소를 입력해주세요.' })
-		} else {
-			address = user.address
-		}
 
 		const dto: CreateOrderDTO = { user_id, product_id, ...req.body }
 

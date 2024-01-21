@@ -220,7 +220,7 @@ export class UserRepository implements IUserRepository {
 	}
 }
 
-interface IUserRepository {
+export interface IUserRepository {
 	createUser(dto: CreateUserDTO): Promise<UserDTO>
 	getUsers(): Promise<UserDTO[]>
 	getUser(email: string): Promise<UserDTO>

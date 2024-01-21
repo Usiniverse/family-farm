@@ -18,6 +18,10 @@ export class OrderService {
 			return { message: '상품을 찾을 수 없습니다.' }
 		}
 
+		if (!dto.target_address) {
+			return { message: '주소를 입력해주세요.' }
+		}
+
 		const orderHistory = await this.orderRepository.getOrderHistoryByUserId(dto.user_id)
 
 		// 이전에 1번이라도 주문한 적이 있다면 주문횟수를 1 더하기
@@ -29,7 +33,11 @@ export class OrderService {
 
 		try {
 			const result = await this.orderRepository.createOrder(dto)
-			return result
+			console.log('주문완료::: ', result)
+
+			// 문자 메세지 발송 기능 구현 필요
+
+			return result as OrderDTO
 		} catch (error) {
 			console.error(error)
 			throw error
