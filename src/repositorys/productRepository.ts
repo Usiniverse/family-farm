@@ -56,7 +56,7 @@ export class ProductRepository implements IProductRepository {
 				})
 			})
 
-			return result as ProductDTO
+			return result[0] as ProductDTO
 		} catch (e) {
 			console.error(e)
 			throw e
