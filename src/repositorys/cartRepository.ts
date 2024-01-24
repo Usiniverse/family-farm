@@ -2,6 +2,7 @@ import { RowDataPacket } from 'mysql2'
 import { CreateCartDTO } from '../dtos/carts/CreateCartDTO'
 import { CartDTO } from '../dtos/carts/cartDTO'
 import { connection } from '../../shared/lib/db'
+import { UpdateCartDTO } from '../dtos/carts/updateCartDTO'
 
 export class CartRepository implements ICartRepository {
 	public async createCart(dto: CreateCartDTO): Promise<CartDTO> {
@@ -39,7 +40,7 @@ export class CartRepository implements ICartRepository {
 	}
 
 	public async getCart(user_id: number): Promise<CartDTO> {
-		const query = `SELECT * FROM carts WHERE user_id = ? ORDER BY create_at DESC`
+		const query = `SELECT * FROM carts WHERE user_id = ? ORDER BY created_at DESC`
 		const value = [user_id]
 
 		try {
@@ -74,7 +75,6 @@ export class CartRepository implements ICartRepository {
 					}
 				})
 			})
-			console.log('레포 ::: ', result)
 
 			return result as CartDTO[]
 		} catch (e) {
@@ -105,9 +105,9 @@ export class CartRepository implements ICartRepository {
 		}
 	}
 
-	public async updateCart(cart_id: number, quantity: number): Promise<CartDTO> {
-		const query = `UPDATE carts SET quantity = ? WHERE id = ?`
-		const values = [quantity, cart_id]
+	public async updateCart(dto: UpdateCartDTO): Promise<CartDTO> {
+		const query = `UPDATE carts SET quantity = ?, price = ? WHERE id = ?`
+		const values = [dto.quantity, dto.price, dto.cart_id]
 
 		try {
 			const result = await new Promise((resolve, reject) => {
@@ -120,7 +120,20 @@ export class CartRepository implements ICartRepository {
 				})
 			})
 
-			return result[0] as CartDTO
+			const selectQuery = `SELECT * FROM carts WHERE id = ?`
+			const selectValue = [dto.cart_id]
+
+			const selectResult = await new Promise((resolve, reject) => {
+				connection.query(selectQuery, selectValue, (selectError, selectResults) => {
+					if (selectError) {
+						reject(selectError)
+					} else {
+						resolve(selectResults)
+					}
+				})
+			})
+
+			return selectResult[0] as CartDTO
 		} catch (e) {
 			console.error(e)
 			throw e
@@ -133,5 +146,5 @@ export interface ICartRepository {
 	getCart(user_id: number): Promise<CartDTO>
 	getCarts(user_id: number): Promise<CartDTO[]>
 	deleteCart(cart_id: number): Promise<CartDTO>
-	updateCart(cart_id: number, quantity: number): Promise<CartDTO>
+	updateCart(dto: UpdateCartDTO): Promise<CartDTO>
 }

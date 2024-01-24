@@ -3,6 +3,7 @@ import express, { Response } from 'express'
 import { CreateCartDTO } from '../dtos/carts/CreateCartDTO'
 import { CartService } from '../services/cartService'
 import { cartService } from '../services'
+import { UpdateCartDTO } from '../dtos/carts/updateCartDTO'
 
 export class CartController {
 	private cartService: CartService
@@ -26,7 +27,6 @@ export class CartController {
 		console.log(user_id)
 
 		const result = await cartService.getCarts(user_id)
-		console.log('컨트롤러::: ', result)
 
 		return res.status(200).json(result)
 	}
@@ -42,9 +42,12 @@ export class CartController {
 
 	public async updateCart(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
-		const { cart_id } = req.body
+		const cart_id = +req.params.cart_id
+		const { quantity, product_id } = req.body
 
-		const result = await cartService.updateCart(cart_id, user_id)
+		const dto: UpdateCartDTO = { user_id, cart_id, quantity, product_id }
+
+		const result = await cartService.updateCart(dto)
 
 		return res.status(200).json(result)
 	}

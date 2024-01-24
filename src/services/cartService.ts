@@ -1,37 +1,66 @@
 import { CreateCartDTO } from '../dtos/carts/CreateCartDTO'
 import { CartDTO } from '../dtos/carts/cartDTO'
+import { UpdateCartDTO } from '../dtos/carts/updateCartDTO'
 import { ICartRepository } from '../repositorys/cartRepository'
+import { IProductRepository } from '../repositorys/productRepository'
 
 export class CartService {
 	private cartRepository: ICartRepository
+	private productRepository: IProductRepository
 
-	constructor(cartRepository: ICartRepository) {
+	constructor(cartRepository: ICartRepository, productRepository: IProductRepository) {
 		this.cartRepository = cartRepository
+		this.productRepository = productRepository
 	}
 
 	public async createCart(dto: CreateCartDTO): Promise<CartDTO> {
-		const totalPrice = dto.price * dto.quantity
+		try {
+			const totalPrice = dto.price * dto.quantity
 
-		dto.price = totalPrice
+			dto.price = totalPrice
 
-		const result = await this.cartRepository.createCart(dto)
+			const result = await this.cartRepository.createCart(dto)
 
-		return result
+			return result
+		} catch (error) {
+			console.error(error)
+			throw error
+		}
 	}
 
 	public async getCarts(user_id: number): Promise<CartDTO[]> {
-		const result = await this.cartRepository.getCarts(user_id)
+		try {
+			const result = await this.cartRepository.getCarts(user_id)
 
-		console.log('서비스 ::: ', result)
-
-		return result
+			return result
+		} catch (error) {
+			console.error(error)
+			throw error
+		}
 	}
 
 	public async deleteCart(cart_id: number, user_id: number): Promise<CartDTO> {
 		return
 	}
 
-	public async updateCart(cart_id: number, user_id: number): Promise<CartDTO> {
-		return
+	public async updateCart(dto: UpdateCartDTO): Promise<CartDTO> {
+		try {
+			const cart = await this.cartRepository.getCart(dto.user_id)
+
+			const product = await this.productRepository.getProduct(dto.product_id)
+
+			// 수량 조절 시 기존 DB와 맞지 않으면 수정해주기
+			if (cart.quantity !== dto.quantity) {
+				dto.price = dto.quantity * product.price
+				const result = await this.cartRepository.updateCart(dto)
+				return result
+			} else {
+				// 기존과 수량이 같다면 수정할 필요 없음.
+				return
+			}
+		} catch (error) {
+			console.error(error)
+			throw error
+		}
 	}
 }

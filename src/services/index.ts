@@ -20,7 +20,7 @@ const orderService = new OrderService(orderRepository)
 const productService = new ProductService(productRepository)
 const commentService = new CommentService(commentRepository)
 const authService = new AuthService()
-const cartService = new CartService(cartRepository)
+const cartService = new CartService(cartRepository, productRepository)
 
 export {
 	userService,
