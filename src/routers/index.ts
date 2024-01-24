@@ -6,6 +6,7 @@ import { authRouter } from './authRouter'
 import { orderRouter } from './orderRouter'
 import { productRouter } from './productRouter'
 import { commentRouter } from './commentRouter'
+import { cartRouter } from './cartRouter'
 
 const indexRouter = Router()
 
@@ -26,5 +27,8 @@ indexRouter.use('/orders', orderRouter)
 
 // 상품 관리
 indexRouter.use('/products', productRouter)
+
+// 장바구니
+indexRouter.use('/carts', cartRouter)
 
 export { indexRouter }

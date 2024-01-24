@@ -5,4 +5,6 @@ export interface Cart {
 	quantity: number
 	product_image?: string
 	price: number
+	created_at: Date
+	updated_at: Date
 }
