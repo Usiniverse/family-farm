@@ -12,3 +12,6 @@ cartRouter.get('/', checkedUser, cartController.getCarts)
 
 // 장바구니 수정
 cartRouter.patch('/:cart_id', checkedUser, cartController.updateCart)
+
+// 장바구니 삭제
+cartRouter.delete('/:cart_id', checkedUser, cartController.deleteCart)

@@ -33,7 +33,7 @@ export class CartController {
 
 	public async deleteCart(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
-		const { cart_id } = req.body
+		const cart_id = +req.params.cart_id
 
 		const result = await cartService.deleteCart(cart_id, user_id)
 

@@ -3,6 +3,8 @@ import { CreateCartDTO } from '../dtos/carts/CreateCartDTO'
 import { CartDTO } from '../dtos/carts/cartDTO'
 import { connection } from '../../shared/lib/db'
 import { UpdateCartDTO } from '../dtos/carts/updateCartDTO'
+import { rejects } from 'assert'
+import { resolve } from 'path'
 
 export class CartRepository implements ICartRepository {
 	public async createCart(dto: CreateCartDTO): Promise<CartDTO> {
@@ -39,7 +41,29 @@ export class CartRepository implements ICartRepository {
 		}
 	}
 
-	public async getCart(user_id: number): Promise<CartDTO> {
+	public async getCart(cart_id: number): Promise<CartDTO> {
+		const query = `SELECT * FROM carts WHERE id = ?`
+		const values = [cart_id]
+
+		try {
+			const result = await new Promise((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
+
+			return result[0] as CartDTO
+		} catch (error) {
+			console.error(error)
+			throw error
+		}
+	}
+
+	public async getCartByUserId(user_id: number): Promise<CartDTO> {
 		const query = `SELECT * FROM carts WHERE user_id = ? ORDER BY created_at DESC`
 		const value = [user_id]
 
@@ -87,6 +111,8 @@ export class CartRepository implements ICartRepository {
 		const query = `DELETE FROM carts WHERE id = ?`
 		const values = [cart_id]
 
+		const cartBeforeDeletion = await this.getCart(cart_id)
+
 		try {
 			const result = await new Promise((resolve, reject) => {
 				connection.query(query, values, (error, results) => {
@@ -98,7 +124,7 @@ export class CartRepository implements ICartRepository {
 				})
 			})
 
-			return result[0] as CartDTO
+			return cartBeforeDeletion
 		} catch (e) {
 			console.error(e)
 			throw e
@@ -110,7 +136,7 @@ export class CartRepository implements ICartRepository {
 		const values = [dto.quantity, dto.price, dto.cart_id]
 
 		try {
-			const result = await new Promise((resolve, reject) => {
+			await new Promise((resolve, reject) => {
 				connection.query(query, values, (error, results) => {
 					if (error) {
 						reject(error)
@@ -132,6 +158,7 @@ export class CartRepository implements ICartRepository {
 					}
 				})
 			})
+			console.log('레포지토리 ::: selectResult[0]', selectResult[0])
 
 			return selectResult[0] as CartDTO
 		} catch (e) {
@@ -143,7 +170,8 @@ export class CartRepository implements ICartRepository {
 
 export interface ICartRepository {
 	createCart(dto: CreateCartDTO): Promise<CartDTO>
-	getCart(user_id: number): Promise<CartDTO>
+	getCart(cart_id: number): Promise<CartDTO>
+	getCartByUserId(user_id: number): Promise<CartDTO>
 	getCarts(user_id: number): Promise<CartDTO[]>
 	deleteCart(cart_id: number): Promise<CartDTO>
 	updateCart(dto: UpdateCartDTO): Promise<CartDTO>

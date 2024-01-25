@@ -39,13 +39,27 @@ export class CartService {
 		}
 	}
 
-	public async deleteCart(cart_id: number, user_id: number): Promise<CartDTO> {
-		return
+	public async deleteCart(cart_id: number, user_id: number): Promise<CartDTO | string> {
+		try {
+			// 유저 검사
+			const getCart = await this.cartRepository.getCart(cart_id)
+
+			if (getCart.user_id !== user_id) {
+				return '잘못된 요청입니다.'
+			}
+
+			const result = await this.cartRepository.deleteCart(cart_id)
+
+			return result
+		} catch (error) {
+			console.error(error)
+			throw error
+		}
 	}
 
 	public async updateCart(dto: UpdateCartDTO): Promise<CartDTO> {
 		try {
-			const cart = await this.cartRepository.getCart(dto.user_id)
+			const cart = await this.cartRepository.getCartByUserId(dto.user_id)
 
 			const product = await this.productRepository.getProduct(dto.product_id)
 
