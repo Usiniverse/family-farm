@@ -50,6 +50,35 @@ export class OrderRepository implements IOrderRepository {
 		}
 	}
 
+	public async getOrdersForDate(startDate: Date, endDate: Date): Promise<any[]> {
+		// const query = `
+		// 	SELECT o.*, u.*
+		// 	FROM orders as o
+		// 	INNER JOIN users as u ON o.user_id = u.id
+		// 	WHERE o.created_at = ?
+		// `
+		const query = `SELECT * FROM orders WHERE created_at BETWEEN ? AND ?`
+		const values = [startDate, endDate]
+
+		try {
+			const results = await new Promise<any[]>((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
+
+			const result = results.map((row) => this.mapRowToOrderDTO(row))
+			return result
+		} catch (e) {
+			console.error(e)
+			throw e
+		}
+	}
+
 	public async getOrder(id: number): Promise<OrderDTO> {
 		const query = `SELECT * FROM orders WHERE id = ?`
 		const values = [id]
@@ -134,6 +163,7 @@ export class OrderRepository implements IOrderRepository {
 }
 export interface IOrderRepository {
 	createOrder(dto: CreateOrderDTO): Promise<OrderDTO>
+	getOrdersForDate(startDate: Date, endDate: Date): Promise<any[]>
 	getOrder(dto: number): Promise<OrderDTO>
 	getOrderHistoryByUserId(user_id: number): Promise<OrderDTO[]>
 	updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO>

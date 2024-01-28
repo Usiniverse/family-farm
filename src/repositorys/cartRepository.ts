@@ -3,8 +3,6 @@ import { CreateCartDTO } from '../dtos/carts/CreateCartDTO'
 import { CartDTO } from '../dtos/carts/cartDTO'
 import { connection } from '../../shared/lib/db'
 import { UpdateCartDTO } from '../dtos/carts/updateCartDTO'
-import { rejects } from 'assert'
-import { resolve } from 'path'
 
 export class CartRepository implements ICartRepository {
 	public async createCart(dto: CreateCartDTO): Promise<CartDTO> {

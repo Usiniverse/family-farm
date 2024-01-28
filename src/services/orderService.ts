@@ -37,6 +37,8 @@ export class OrderService {
 
 			// 문자 메세지 발송 기능 구현 필요
 
+			// 엑셀 사용 기능 구현
+
 			return result as OrderDTO
 		} catch (error) {
 			console.error(error)
