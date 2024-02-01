@@ -1,8 +1,9 @@
 import { CreateOrderDTO } from '../dtos/orders/createOrderDTO'
 import { OrderDTO } from '../dtos/orders/orderDTO'
 import { IOrderRepository } from '../repositorys/orderRepository'
-import { productService } from '../services'
+import { cartService, productService } from '../services'
 import { ServiceError } from '../../shared/error/error'
+import { orderItemRepository, productRepository } from '../repositorys'
 
 export class OrderService {
 	private orderRepository: IOrderRepository
@@ -11,6 +12,9 @@ export class OrderService {
 		this.orderRepository = orderRepository
 	}
 
+	/**
+	 * 주문서 생성 API
+	 */
 	public async createOrder(dto: CreateOrderDTO): Promise<OrderDTO | ServiceError> {
 		const product = await productService.getProduct(dto.product_id)
 
@@ -22,22 +26,32 @@ export class OrderService {
 			return { message: '주소를 입력해주세요.' }
 		}
 
-		const orderHistory = await this.orderRepository.getOrderHistoryByUserId(dto.user_id)
-
-		// 이전에 1번이라도 주문한 적이 있다면 주문횟수를 1 더하기
-		if (orderHistory.length > 0) {
-			dto.order_count = orderHistory[0].order_count + 1
-		} else {
-			dto.order_count = 1
-		}
-
 		try {
 			const result = await this.orderRepository.createOrder(dto)
 			console.log('주문완료::: ', result)
 
-			// 문자 메세지 발송 기능 구현 필요
+			// 장바구니를 만들고 수량만큼 배열을 생성함.
+			// const carts = await cartService.getCarts(dto.user_id)
+			// console.log('결과 ::: ', carts)
 
-			// 엑셀 사용 기능 구현
+			// carts.map((cart) => {
+			// 	cart.
+			// })
+			/**
+			 * 장바구니 상품이 서로 다를 경우 : 같은 상품을 묶어서 order_items 생성.
+			 * 같을 경우 : 같은대로 order_items 생성
+			 */
+
+			// // 상품 가격 확인을 위해 상품 검색
+			// const product = await productRepository.getProduct(result.id)
+
+			// // 반복문으로 order_items 생성
+			// const createOrderItems = await orderItemRepository.createOrderItem({
+			// 	order_id: result.id,
+			// 	product_id: result.product_id,
+			// 	quantity: cart.length,
+			// 	order_price: product.id,
+			// })
 
 			return result as OrderDTO
 		} catch (error) {

@@ -7,6 +7,7 @@ import { orderRouter } from './orderRouter'
 import { productRouter } from './productRouter'
 import { commentRouter } from './commentRouter'
 import { cartRouter } from './cartRouter'
+import { orderItemRouter } from './orderItemRouter'
 
 const indexRouter = Router()
 
@@ -30,5 +31,8 @@ indexRouter.use('/products', productRouter)
 
 // 장바구니
 indexRouter.use('/carts', cartRouter)
+
+// 주문 상품
+indexRouter.use('/orderItems', orderItemRouter)
 
 export { indexRouter }
