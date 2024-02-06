@@ -27,31 +27,43 @@ export class OrderService {
 		}
 
 		try {
-			const result = await this.orderRepository.createOrder(dto)
-			console.log('주문완료::: ', result)
-
-			// 장바구니를 만들고 수량만큼 배열을 생성함.
-			// const carts = await cartService.getCarts(dto.user_id)
-			// console.log('결과 ::: ', carts)
-
-			// carts.map((cart) => {
-			// 	cart.
-			// })
 			/**
 			 * 장바구니 상품이 서로 다를 경우 : 같은 상품을 묶어서 order_items 생성.
 			 * 같을 경우 : 같은대로 order_items 생성
+			 * 1. 주문 생성
+			 * 2. 장바구니 조회
+			 * 3. 같은 상품끼리 가격과 수량 맞추기
+			 * 4. 반복문 순회하며 order_items(주문 수량) 생성하기
 			 */
+			const result = await this.orderRepository.createOrder(dto)
 
-			// // 상품 가격 확인을 위해 상품 검색
-			// const product = await productRepository.getProduct(result.id)
+			const carts = await cartService.getCarts(dto.user_id)
+			if (!carts) {
+				return { message: '장바구니에 담긴 상품이 없습니다.' }
+			}
 
-			// // 반복문으로 order_items 생성
-			// const createOrderItems = await orderItemRepository.createOrderItem({
-			// 	order_id: result.id,
-			// 	product_id: result.product_id,
-			// 	quantity: cart.length,
-			// 	order_price: product.id,
-			// })
+			const aggregatedCart = []
+			carts.forEach((cart) => {
+				const { product_id, price, quantity } = cart
+				if (aggregatedCart[product_id]) {
+					aggregatedCart[product_id].price += price
+					aggregatedCart[product_id].quantity += quantity
+				} else {
+					aggregatedCart[product_id] = { ...cart, price, quantity }
+				}
+			})
+
+			const groupedCart = aggregatedCart.filter((v) => v !== undefined)
+
+			// 반복문 돌면서 order_items 생성
+			for (let i = 0; i < groupedCart.length; i++) {
+				await orderItemRepository.createOrderItem({
+					order_id: result.id,
+					product_id: result.product_id,
+					quantity: groupedCart[i].quantity,
+					order_price: groupedCart[i].price,
+				})
+			}
 
 			return result as OrderDTO
 		} catch (error) {
