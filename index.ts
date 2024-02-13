@@ -14,7 +14,12 @@ const appServer = async () => {
 	const app = express()
 
 	const corsOptions = {
-		origin: ['http://localhost:8000', 'http://localhost:5173', 'https://familyfarm.co.kr', '*'],
+		origin: [
+			'http://localhost:8000',
+			'http://localhost:5173',
+			'https://familyfarm.co.kr',
+			'http://15.164.54.82',
+		],
 		credentials: true,
 	}
 
