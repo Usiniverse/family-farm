@@ -9,6 +9,7 @@ export class OrderRepository implements IOrderRepository {
 			id: row.id,
 			user_id: row.user_id,
 			target_address: row.target_address,
+			target_phone_number: row.target_phone_number,
 			product_id: row.product_id,
 			created_at: row.created_at,
 			updated_at: row.updated_at,
