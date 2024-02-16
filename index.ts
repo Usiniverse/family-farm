@@ -20,6 +20,7 @@ const appServer = async () => {
 			'https://familyfarm.co.kr',
 			'http://15.164.54.82',
 			'https://apple-fe-test.vercel.app/',
+			'*',
 		],
 		credentials: true,
 	}
