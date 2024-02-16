@@ -24,6 +24,7 @@ const appServer = async () => {
 			'*',
 		],
 		credentials: true,
+		exposedHeaders: '*',
 	}
 
 	app.use(cors(corsOptions))
