@@ -4,6 +4,7 @@ import { CreatePostDTO } from '../dtos/posts/createPostDTO'
 import { GetPostDTO } from '../dtos/posts/getPostDTO'
 import { UpdatePostDTO } from '../dtos/posts/updatePostDTO'
 import { DeletePostDTO } from '../dtos/posts/deletePostDTO'
+import { userService } from '.'
 
 export class PostService {
 	private postsRepository: ICreatePostsRepository
@@ -27,15 +28,11 @@ export class PostService {
 			user_id,
 		})
 
-		console.log('게시글 생성됨::: ', post)
-
 		return post
 	}
 
 	public async getPost(id: number): Promise<PostDTO> {
 		const post = await this.postsRepository.getPost(id)
-
-		console.log('post :::', post)
 
 		return post
 	}
@@ -44,7 +41,13 @@ export class PostService {
 		return await this.postsRepository.getPosts()
 	}
 
-	public async getPostsByUserId(id: number): Promise<PostDTO[]> {
+	public async getPostsByUserId(id: number): Promise<PostDTO[] | String> {
+		const user = await userService.getUserById(id)
+
+		if (!user) {
+			return '유저를 찾을 수 없습니다.'
+		}
+
 		return await this.postsRepository.getPostsByUserId(id)
 	}
 

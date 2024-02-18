@@ -13,33 +13,13 @@ dotenv.config()
 const appServer = async () => {
 	const app = express()
 
-	// const corsOptions = {
-	// 	origin: [
-	// 		'http://localhost:8000',
-	// 		'http://localhost:5173',
-	// 		'https://familyfarm.co.kr',
-	// 		'http://15.164.54.82',
-	// 		'https://apple-fe-one.vercel.app/',
-	// 		'*',
-	// 	],
-	// 	credentials: true,
-	// 	exposedHeaders: '*',
-	// }
-
+	// 추가 설정 필요
 	app.use(
 		cors({
 			origin: true, // 출처 허용 옵션
 			credentials: true, // 사용자 인증이 필요한 리소스(쿠키 ..등) 접근
 		}),
 	)
-
-	// app.use(function (req, res, next) {
-	// 	res.setHeader('Access-Control-Allow-Origin', '*')
-	// 	// res.setHeader('Access-Control-Allow-Origin', 'https://apple-fe-test.vercel.app')
-	// 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE')
-	// 	res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type')
-	// 	next()
-	// })
 
 	app.use(express.json())
 	app.use(bodyParser.json())

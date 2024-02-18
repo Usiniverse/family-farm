@@ -54,13 +54,7 @@ export class PostController {
 
 	// 유저아이디로 게시글 조회
 	async getPostsBySnsId(req: CustomExpressRequest, res: Response) {
-		const user = await userService.getUserById(req.auth.id)
-
-		if (!user) {
-			res.status(400).json({ message: '유저를 찾을 수 없습니다.' })
-		}
-
-		const getUser = await postService.getPostsByUserId(user.id)
+		const getUser = await postService.getPostsByUserId(req.auth.id)
 
 		if (!getUser) {
 			return res.status(400).json({ message: '게시글을 찾을 수 없습니다.' })
@@ -91,8 +85,6 @@ export class PostController {
 			return res.status(400).json({ message: '게시글을 찾을 수 없습니다.' })
 		} else if (userId !== getPost.user_id) {
 			return res.status(400).json({ message: '작성자가 아닙니다.' })
-		} else if (id !== getPost.id) {
-			return res.status(400).json({ message: '유저가 작성한 게시글이 아닙니다.' })
 		}
 
 		const post = await postService.updatePost({
@@ -100,8 +92,6 @@ export class PostController {
 			id,
 			userId,
 		})
-
-		console.log('게시글::: ', post)
 
 		if (!post) {
 			return res.status(400).json({ message: '게시글을 수정할 수 없습니다.' })
