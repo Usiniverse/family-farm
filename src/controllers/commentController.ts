@@ -1,10 +1,11 @@
 import { CustomExpressRequest } from '../../shared/lib/expressRequest'
-import express from 'express'
+import express, { Response } from 'express'
 import { CreateCommentDTO } from '../dtos/comments/createCommentDTO'
 import { commentService } from '../services'
+// import BaseController from '../../shared/lib/baseController'
 
 export class CommentController {
-	public async createComment(req: CustomExpressRequest, res: express.Response) {
+	public async createComment(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
 		console.log(req.params.id, typeof req.params.id)
 		console.log('params:::', req.params)
