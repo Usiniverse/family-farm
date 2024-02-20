@@ -28,7 +28,8 @@ export class AuthService {
 				algorithm: 'HS256',
 				expiresIn: '1d',
 			})
-
+			
+			// 리프레시 토큰
 			// const refreshToken = jwt.sign({ id: user.id }, process.env.MY_KEY, {
 			// 	algorithm: 'HS256',
 			// 	expiresIn: '1d',
