@@ -1,3 +1,5 @@
+// 문자 메세지 발송 API 코드 조각
+
 // function send_message(coin_name, nickname, phone) {
 	
 //     // 예약자 번호, 닉네임, 코인이름
