@@ -34,4 +34,11 @@ export class ProductController {
 
 		return res.status(200).send(result)
 	}
+
+	public async updateProduct(req: CustomExpressRequest, res: Response) {
+		const product_id = +req.params.id
+		const result = await productService.updateProduct(product_id, req.body)
+
+		return res.status(200).send(result)
+	}
 }

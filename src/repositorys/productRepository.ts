@@ -2,6 +2,7 @@ import { ProductDTO } from '../dtos/products/productDTO'
 import { CreateProductDTO } from '../dtos/products/createProductDTO'
 import { connection } from '../../shared/lib/db'
 import { RowDataPacket } from 'mysql2'
+import { UpdateProductDTO } from '../dtos/products/UpdateProductDTO'
 
 export class ProductRepository implements IProductRepository {
 	public async createProduct(dto: CreateProductDTO): Promise<ProductDTO> {
@@ -105,6 +106,36 @@ export class ProductRepository implements IProductRepository {
 			throw e
 		}
 	}
+
+	public async updateProduct(id: number, dto: UpdateProductDTO): Promise<ProductDTO> {
+		const { product_name, price, weight } = dto;
+	
+		const query = `
+			UPDATE products 
+			SET product_name = ?, price = ?, weight = ?
+			WHERE id = ?`;
+		const values = [product_name, price, weight, id];
+	
+		try {
+			await new Promise((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error);
+					} else {
+						resolve(results);
+					}
+				});
+			});
+	
+			// 업데이트된 제품의 정보를 조회합니다.
+			const updatedProduct = await this.getProduct(id);
+			return updatedProduct;
+		} catch (e) {
+			console.error(e);
+			throw e;
+		}
+	}
+	
 }
 
 export interface IProductRepository {
@@ -112,4 +143,5 @@ export interface IProductRepository {
 	getProduct(id: number): Promise<ProductDTO>
 	// getProductsByUserId(user_id: number): Promise<ProductDTO[]>
 	getProducts(): Promise<ProductDTO[]>
+	updateProduct(id: number, dto: UpdateProductDTO): Promise<ProductDTO>
 }

@@ -1,5 +1,6 @@
 import { CreateProductDTO } from '../dtos/products/createProductDTO'
 import { ProductDTO } from '../dtos/products/productDTO'
+import { UpdateProductDTO } from '../dtos/products/UpdateProductDTO'
 import { ProductRepository } from '../repositorys/productRepository'
 
 export class ProductService {
@@ -29,6 +30,12 @@ export class ProductService {
 
 	public async getProducts(): Promise<ProductDTO[]> {
 		const result = await this.productRepository.getProducts()
+
+		return result
+	}
+
+	public async updateProduct(id: number, dto: UpdateProductDTO): Promise<ProductDTO> {
+		const result = await this.productRepository.updateProduct(id, dto)
 
 		return result
 	}

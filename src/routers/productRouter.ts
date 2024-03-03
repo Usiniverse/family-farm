@@ -11,3 +11,5 @@ productRouter.get('/:id', productController.getProduct)
 // productRouter.get('/', checkedUser, productController.getProductsByUserId)
 
 productRouter.get('/', productController.getProducts)
+
+productRouter.put('/:id', checkedUser, productController.updateProduct)
