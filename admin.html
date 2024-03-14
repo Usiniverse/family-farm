@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상품 관리</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ccc;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .add-product input[type="text"],
+        .add-product input[type="number"] {
+            width: calc(100% - 90px);
+            margin-right: 10px;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .add-product button {
+            padding: 8px 15px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .product-row button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #dc3545;
+            color: #fff;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .product-row .save-button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>상품 관리</h1>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>공개 여부</th>
+                    <th>판매 상태</th>
+                    <th>상품명</th>
+                    <th>무게</th>
+                    <th>가격</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="productList">
+                <!-- 여기에 상품 목록이 들어갈 것입니다. -->
+            </tbody>
+        </table>
+
+        <div class="add-product">
+            <input type="text" id="productName" placeholder="상품명">
+            <input type="number" id="productWeight" placeholder="무게">
+            <input type="number" id="productPrice" placeholder="가격">
+            <button onclick="createProduct()">등록</button>
+        </div>
+    </div>
+
+    <script>
+        // 간단한 데이터베이스 대신에 JavaScript 배열을 사용합니다.
+        let products = [];
+
+        function renderProducts() {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+
+            products.forEach((product, index) => {
+                const row = document.createElement('tr');
+                row.classList.add('product-row');
+                row.innerHTML = `
+                    <td>
+                        <input type="checkbox" onchange="toggleVisibility(${index}, this.checked)" ${product.visible ? 'checked' : ''}>
+                    </td>
+                    <td>
+                        <select onchange="toggleSelling(${index}, this.value)">
+                                <option value="true" ${product.selling ? 'selected' : ''}>판매중</option>
+                                <option value="false" ${!product.selling ? 'selected' : ''}>품절</option>
+                        </select>
+                    </td>
+                    <td>${product.name}</td>
+                    <td>${product.weight}kg</td>
+                    <td>₩${product.price}</td>
+                    <td>
+                        <button class="save-button" onclick="updateProduct(${index})">저장</button>
+                        <button onclick="deleteProduct(${index})">삭제</button>
+                    </td>
+                `;
+                productList.appendChild(row);
+            });
+        }
+
+        function addProduct() {
+            const productName = document.getElementById('productName').value.trim();
+            const productWeight = parseInt(document.getElementById('productWeight').value);
+            const productPrice = parseInt(document.getElementById('productPrice').value);
+
+            if (productName === '' || isNaN(productWeight) || isNaN(productPrice)) {
+                alert('모든 필드를 채워주세요.');
+                return;
+            }
+
+            const newProduct = {
+                visible: true, // 기본값은 공개로 설정합니다.
+                selling: true, // 기본값은 판매중으로 설정합니다.
+                name: productName,
+                weight: productWeight,
+                price: productPrice
+            };
+
+            products.push(newProduct);
+            renderProducts();
+
+            // 입력 필드 초기화
+            document.getElementById('productName').value = '';
+            document.getElementById('productWeight').value = '';
+            document.getElementById('productPrice').value = '';
+        }
+
+        function deleteProduct(index) {
+            products.splice(index, 1);
+            renderProducts();
+        }
+
+        function toggleVisibility(index, checked) {
+            products[index].visible = checked;
+        }
+
+        function toggleSelling(index, checked) {
+            products[index].selling = checked;
+        }
+
+        function saveProduct(index) {
+            // 저장 기능을 추가할 수 있습니다.
+            // 여기에 저장 로직을 추가하세요.
+            console.log(`상품 저장: ${products[index].name}`);
+        }
+
+        // 초기 상품 데이터를 미리 추가합니다. (테스트 용도)
+        products.push({visible: true, selling: true, name: '사과', weight: 1, price: 1000});
+        products.push({visible: true, selling: false, name: '바나나', weight: 1.2, price: 1500});
+        products.push({visible: true, selling: true, name: '딸기', weight: 0.8, price: 2000});
+
+        // 페이지 로드 시 상품 목록을 렌더링합니다.
+        document.addEventListener('DOMContentLoaded', renderProducts);
+    </script>
+</body>
+</html>

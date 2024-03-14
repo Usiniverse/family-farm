@@ -22,11 +22,18 @@
                     <td><input type="password" id="pw" name="pw"></td>
                 </tr>
                 <tr style="text-align: center;">
-                    <td colspan="2"><input type="submit" value="로그인"></td>
+                    <td colspan="2"><input type="submit" value="로그인"></button></td>
                 </tr>
             </table>
         </form>
     </div>
     <script src="index.ts"></script>
+    <script src="src/routers/authRouter.ts"></script>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // 기본 동작 방지
+
+        });
+    </script>
 </body>
 </html>
