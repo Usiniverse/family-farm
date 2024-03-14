@@ -28,7 +28,7 @@ export class AuthService {
 				algorithm: 'HS256',
 				expiresIn: '1d',
 			})
-			
+
 			// 리프레시 토큰
 			// const refreshToken = jwt.sign({ id: user.id }, process.env.MY_KEY, {
 			// 	algorithm: 'HS256',
@@ -36,6 +36,37 @@ export class AuthService {
 			// })
 
 			return { user, accessToken }
+		} catch (error) {
+			throw error
+		}
+	}
+
+	public async adminLoginService({ email, password }: LoginDTO): Promise<any> {
+		try {
+			const user = await userService.getUserByEmail({ email })
+
+			if (user.email === process.env.ADMIN_USER) {
+				if (!user) {
+					throw new Error('사용자를 찾을 수 없습니다.')
+				}
+
+				if (password && !user.sns_id) {
+					const passwordMatch = await bcrypt.compare(password, user.password)
+
+					if (!passwordMatch) {
+						throw new Error('비밀번호가 맞지 않습니다.')
+					}
+				}
+
+				const accessToken = jwt.sign({ id: user.id }, process.env.MY_KEY, {
+					algorithm: 'HS256',
+					expiresIn: '1d',
+				})
+
+				return { user, accessToken }
+			} else {
+				return '관리자가 아닙니다.'
+			}
 		} catch (error) {
 			throw error
 		}
