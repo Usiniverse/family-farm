@@ -22,12 +22,6 @@ export class ProductService {
 		return result
 	}
 
-	// public async getProductsByUserId(user_id: number): Promise<ProductDTO[]> {
-	// 	const result = await this.productRepository.getProductsByUserId(user_id)
-
-	// 	return result
-	// }
-
 	public async getProducts(): Promise<ProductDTO[]> {
 		const result = await this.productRepository.getProducts()
 

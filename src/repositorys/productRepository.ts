@@ -7,9 +7,9 @@ import { UpdateProductDTO } from '../dtos/products/UpdateProductDTO'
 export class ProductRepository implements IProductRepository {
 	public async createProduct(dto: CreateProductDTO): Promise<ProductDTO> {
 		const query = `
-			INSERT INTO products (product_name, price, weight)
+			INSERT INTO products (product_name, price, weight, is_opened)
 			VALUES (?, ?, ?)`
-		const values = [dto.product_name, dto.price, dto.weight]
+		const values = [dto.product_name, dto.price, dto.weight, dto.is_opened]
 
 		try {
 			const result = await new Promise<RowDataPacket>((resolve, reject) => {
@@ -108,34 +108,33 @@ export class ProductRepository implements IProductRepository {
 	}
 
 	public async updateProduct(id: number, dto: UpdateProductDTO): Promise<ProductDTO> {
-		const { product_name, price, weight } = dto;
-	
+		const { product_name, price, weight, is_opened } = dto
+
 		const query = `
 			UPDATE products 
-			SET product_name = ?, price = ?, weight = ?
-			WHERE id = ?`;
-		const values = [product_name, price, weight, id];
-	
+			SET product_name = ?, price = ?, weight = ?, is_opened = ?
+			WHERE id = ?`
+		const values = [product_name, price, weight, is_opened, id]
+
 		try {
 			await new Promise((resolve, reject) => {
 				connection.query(query, values, (error, results) => {
 					if (error) {
-						reject(error);
+						reject(error)
 					} else {
-						resolve(results);
+						resolve(results)
 					}
-				});
-			});
-	
+				})
+			})
+
 			// 업데이트된 제품의 정보를 조회합니다.
-			const updatedProduct = await this.getProduct(id);
-			return updatedProduct;
+			const updatedProduct = await this.getProduct(id)
+			return updatedProduct
 		} catch (e) {
-			console.error(e);
-			throw e;
+			console.error(e)
+			throw e
 		}
 	}
-	
 }
 
 export interface IProductRepository {
