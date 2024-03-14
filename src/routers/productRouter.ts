@@ -13,3 +13,5 @@ productRouter.get('/:id', productController.getProduct)
 productRouter.get('/', productController.getProducts)
 
 productRouter.put('/:id', checkedUser, productController.updateProduct)
+
+productRouter.delete('/:id', checkedUser, productController.deleteProduct)

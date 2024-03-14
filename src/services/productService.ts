@@ -33,4 +33,10 @@ export class ProductService {
 
 		return result
 	}
+
+	public async deleteProduct(id: number): Promise<ProductDTO> {
+		const result = await this.productRepository.deleteProduct(id)
+
+		return result
+	}
 }

@@ -6,10 +6,14 @@ import { UpdateProductDTO } from '../dtos/products/UpdateProductDTO'
 
 export class ProductRepository implements IProductRepository {
 	public async createProduct(dto: CreateProductDTO): Promise<ProductDTO> {
+		console.log('레포지토리 :::', dto)
+
 		const query = `
 			INSERT INTO products (product_name, price, weight, is_opened)
-			VALUES (?, ?, ?)`
+			VALUES (?, ?, ?, ?)`
 		const values = [dto.product_name, dto.price, dto.weight, dto.is_opened]
+
+		console.log('values 체크::: ', values)
 
 		try {
 			const result = await new Promise<RowDataPacket>((resolve, reject) => {
@@ -135,6 +139,28 @@ export class ProductRepository implements IProductRepository {
 			throw e
 		}
 	}
+
+	public async deleteProduct(id: number): Promise<ProductDTO> {
+		const query = 'DELETE FROM products WHERE id = ?'
+		const values = [id]
+
+		try {
+			const result = await new Promise((resolve, reject) => {
+				connection.query(query, values, (error, results) => {
+					if (error) {
+						reject(error)
+					} else {
+						resolve(results)
+					}
+				})
+			})
+
+			return result[0] as ProductDTO
+		} catch (e) {
+			console.error(e)
+			throw e
+		}
+	}
 }
 
 export interface IProductRepository {
@@ -143,4 +169,5 @@ export interface IProductRepository {
 	// getProductsByUserId(user_id: number): Promise<ProductDTO[]>
 	getProducts(): Promise<ProductDTO[]>
 	updateProduct(id: number, dto: UpdateProductDTO): Promise<ProductDTO>
+	deleteProduct(id: number): Promise<ProductDTO>
 }

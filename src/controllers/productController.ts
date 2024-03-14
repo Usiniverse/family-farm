@@ -15,6 +15,7 @@ export class ProductController {
 		const user_id = req.auth.id
 
 		const dto: CreateProductDTO = { user_id, ...req.body }
+		console.log('상품 구성 ::: ', dto)
 
 		const result = await productService.createProduct(dto)
 
@@ -38,6 +39,13 @@ export class ProductController {
 	public async updateProduct(req: CustomExpressRequest, res: Response) {
 		const product_id = +req.params.id
 		const result = await productService.updateProduct(product_id, req.body)
+
+		return res.status(200).send(result)
+	}
+
+	public async deleteProduct(req: CustomExpressRequest, res: Response) {
+		const product_id = +req.params.id
+		const result = await productService.deleteProduct(product_id)
 
 		return res.status(200).send(result)
 	}
