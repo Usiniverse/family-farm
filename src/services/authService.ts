@@ -45,11 +45,11 @@ export class AuthService {
 		try {
 			const user = await userService.getUserByEmail({ email })
 
-			if (user.email === process.env.ADMIN_USER) {
-				if (!user) {
-					throw new Error('사용자를 찾을 수 없습니다.')
-				}
+			if (!user) {
+				throw new Error('사용자를 찾을 수 없습니다.')
+			}
 
+			if (user.email === process.env.ADMIN_USER) {
 				if (password && !user.sns_id) {
 					const passwordMatch = await bcrypt.compare(password, user.password)
 

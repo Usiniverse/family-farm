@@ -22,7 +22,7 @@ export class AuthController {
 	public async adminLogin(req: CustomExpressRequest, res: Response) {
 		const { email, password } = req.body
 
-		const result = await authService.loginService({ email, password })
+		const result = await authService.adminLoginService({ email, password })
 
 		return res.status(200).json(result)
 	}
