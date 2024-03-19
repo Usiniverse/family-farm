@@ -43,8 +43,26 @@ export class OrderItemRepository implements IOrderItemRepository {
 
 		return selectResult as OrderItemDTO
 	}
+
+	public async getOrderItemByOrderId(id: number): Promise<OrderItemDTO[]> {
+		const query = `SELECT * FROM order_items WHERE order_id = ? ORDER BY created_at DESC`
+		const values = [id]
+
+		const result = await new Promise((resolve, reject) => {
+			connection.query(query, values, (error, results) => {
+				if (error) {
+					reject(error)
+				} else {
+					resolve(results)
+				}
+			})
+		})
+
+		return result as OrderItemDTO[]
+	}
 }
 
 export interface IOrderItemRepository {
 	createOrderItem(dto: CreateOrderItemDTO): Promise<OrderItemDTO>
+	getOrderItemByOrderId(id: number): Promise<OrderItemDTO[]>
 }

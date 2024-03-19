@@ -37,8 +37,6 @@ export class CartService {
 				result[i].product = product
 			}
 
-			console.log('장바구니 리스트 조회 ::: ', result)
-
 			return result
 		} catch (error) {
 			console.error(error)

@@ -18,7 +18,7 @@ import { OrderItemService } from './orderItemService'
 
 const userService = new UserService(userRepository)
 const postService = new PostService(postRepository)
-const orderService = new OrderService(orderRepository)
+const orderService = new OrderService(orderRepository, orderItemRepository)
 const productService = new ProductService(productRepository)
 const commentService = new CommentService(commentRepository)
 const authService = new AuthService()

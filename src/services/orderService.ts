@@ -4,11 +4,13 @@ import { IOrderRepository } from '../repositorys/orderRepository'
 import { cartService, productService } from '../services'
 import { ServiceError } from '../../shared/error/error'
 import { orderItemRepository, productRepository } from '../repositorys'
+import { IOrderItemRepository } from '../repositorys/orderItemRepository'
 
 export class OrderService {
 	private orderRepository: IOrderRepository
+	private orderItemRepository: IOrderItemRepository
 
-	constructor(orderRepository: IOrderRepository) {
+	constructor(orderRepository: IOrderRepository, orderItemRepository: IOrderItemRepository) {
 		this.orderRepository = orderRepository
 	}
 
@@ -73,10 +75,29 @@ export class OrderService {
 	}
 
 	public async getOrder(id: number): Promise<OrderDTO> {
-		return await this.orderRepository.getOrder(id)
+		try {
+			const result = await this.orderRepository.getOrder(id)
+
+			return result
+		} catch (error) {
+			console.error(error)
+			throw error
+		}
 	}
 
 	public async getOrderHistoryByUserId(user_id: number): Promise<OrderDTO[]> {
-		return await this.orderRepository.getOrderHistoryByUserId(user_id)
+		try {
+			const result = await this.orderRepository.getOrderHistoryByUserId(user_id)
+
+			for (let i = 0; i < result.length; i++) {
+				const orderItem = await orderItemRepository.getOrderItemByOrderId(result[i].id)
+				result[i].order_items = orderItem
+			}
+
+			return result
+		} catch (error) {
+			console.error(error)
+			throw error
+		}
 	}
 }

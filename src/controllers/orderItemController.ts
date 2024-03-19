@@ -12,7 +12,7 @@ export class OrderItemController {
 	public async createOrderItem(req: CustomExpressRequest, res: Response) {
 		const dto = { ...req.body }
 
-		const result = await this.orderItemService.createOrderItemService(dto)
+		const result = await this.orderItemService.createOrderItem(dto)
 
 		if (!result) {
 			return res.status(400).json({ message: '주문이 취소되었습니다.' })

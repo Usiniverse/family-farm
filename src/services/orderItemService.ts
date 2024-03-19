@@ -14,7 +14,7 @@ export class OrderItemService {
 	 * @param dto
 	 * @returns OrderItemDTO
 	 */
-	public async createOrderItemService(dto: CreateOrderItemDTO): Promise<OrderItemDTO> {
+	public async createOrderItem(dto: CreateOrderItemDTO): Promise<OrderItemDTO> {
 		const result = await this.orderItemRepository.createOrderItem(dto)
 
 		return result
