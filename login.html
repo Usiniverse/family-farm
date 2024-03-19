@@ -27,12 +27,12 @@
             </table>
         </form>
     </div>
-    <script src="index.ts"></script>
-    <script src="src/routers/authRouter.ts"></script>
+    <script type="application/javascript" src="./index.ts"></script>
+    <script type="text/javascript" src="./src/controllers/authController.ts"></script>
     <script>
         document.getElementById("loginForm").addEventListener("submit", function(event) {
             event.preventDefault(); // 기본 동작 방지
-
+            adminLogin();
         });
     </script>
 </body>

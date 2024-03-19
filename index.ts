@@ -54,7 +54,7 @@ const appServer = async () => {
 
 	app.use('/', indexRouter)
 
-	app.get('/', (req:Request, res:Response) => {
+	app.get('/', (req: Request, res: Response) => {
 		res.sendFile(__dirname + '/login.html')
 	})
 

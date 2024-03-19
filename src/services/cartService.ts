@@ -32,6 +32,13 @@ export class CartService {
 		try {
 			const result = await this.cartRepository.getCarts(user_id)
 
+			for (let i = 0; i < result.length; i++) {
+				const product = await this.productRepository.getProduct(result[i].product_id)
+				result[i].product = product
+			}
+
+			console.log('장바구니 리스트 조회 ::: ', result)
+
 			return result
 		} catch (error) {
 			console.error(error)

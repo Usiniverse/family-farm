@@ -14,8 +14,5 @@ orderRouter.get('/', checkedUser, orderController.getOrderHistoryByUserId)
 // 단일 주문 건 조회
 orderRouter.get('/:id', checkedUser, orderController.getOrder)
 
-// 장바구니 생성하기
-// orderRouter.post('/cart', checkedUser)
-
 // 엑셀시트 생성하기(checkedUser 추가 예정)
 orderRouter.post('/list', generateOrderExcelsheet)
