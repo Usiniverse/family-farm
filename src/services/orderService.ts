@@ -18,13 +18,7 @@ export class OrderService {
 	 * 주문서 생성 API
 	 */
 	public async createOrder(dto: CreateOrderDTO): Promise<OrderDTO | ServiceError> {
-		const product = await productService.getProduct(dto.product_id)
-
-		if (!product) {
-			return { message: '상품을 찾을 수 없습니다.' }
-		}
-
-		if (!dto.target_address) {
+		if (!dto.delivery_address || !dto.order_address) {
 			return { message: '주소를 입력해주세요.' }
 		}
 
@@ -39,16 +33,11 @@ export class OrderService {
 			 */
 			const result = await this.orderRepository.createOrder(dto)
 
-			const carts = await cartService.getCarts(dto.user_id)
-			if (!carts) {
-				return { message: '장바구니에 담긴 상품이 없습니다.' }
-			}
-
 			const aggregatedCart = []
-			carts.forEach((cart) => {
+			dto.carts.forEach((cart) => {
 				const { product_id, price, quantity } = cart
 				if (aggregatedCart[product_id]) {
-					aggregatedCart[product_id].price += price
+					aggregatedCart[product_id].price = price * quantity
 					aggregatedCart[product_id].quantity += quantity
 				} else {
 					aggregatedCart[product_id] = { ...cart, price, quantity }
@@ -57,15 +46,19 @@ export class OrderService {
 
 			const groupedCart = aggregatedCart.filter((v) => v !== undefined)
 
+			const orderItems = []
 			// 반복문 돌면서 order_items 생성
 			for (let i = 0; i < groupedCart.length; i++) {
-				await orderItemRepository.createOrderItem({
+				const orderItem = await orderItemRepository.createOrderItem({
 					order_id: result.id,
-					product_id: result.product_id,
+					product_id: groupedCart[i].product_id,
 					quantity: groupedCart[i].quantity,
 					order_price: groupedCart[i].price,
 				})
+
+				orderItems.push(orderItem)
 			}
+			result.order_items = orderItems
 
 			return result as OrderDTO
 		} catch (error) {

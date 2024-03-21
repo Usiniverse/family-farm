@@ -16,9 +16,8 @@ export class OrderController {
 
 	public async createOrder(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
-		const product_id = req.body.product_id
 
-		const dto: CreateOrderDTO = { user_id, product_id, ...req.body }
+		const dto: CreateOrderDTO = { user_id, ...req.body }
 
 		const result = await orderService.createOrder(dto)
 

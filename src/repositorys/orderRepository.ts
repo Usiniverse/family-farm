@@ -8,17 +8,39 @@ export class OrderRepository implements IOrderRepository {
 		return {
 			id: row.id,
 			user_id: row.user_id,
-			target_address: row.target_address,
-			target_phone_number: row.target_phone_number,
-			product_id: row.product_id,
+			order_name: row.order_name,
+			order_address: row.order_address,
+			order_phone_number: row.order_phone_number,
+			delivery_name: row.delivery_name,
+			delivery_address: row.delivery_address,
+			delivery_phone_number: row.delivery_phone_number,
+			delivery_message: row.delivery_message,
 			created_at: row.created_at,
 			updated_at: row.updated_at,
 		}
 	}
 
 	public async createOrder(dto: CreateOrderDTO): Promise<OrderDTO> {
-		const query = `INSERT INTO orders (user_id, target_address, product_id) VALUES (?, ?, ?)`
-		const values = [dto.user_id, dto.target_address, dto.product_id]
+		const query = `INSERT INTO orders (
+			user_id, 
+			order_name, 
+			order_address, 
+			order_phone_number, 
+			delivery_name, 
+			delivery_address, 
+			delivery_phone_number, 
+			delivery_message
+			) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+		const values = [
+			dto.user_id,
+			dto.order_name,
+			dto.order_address,
+			dto.order_phone_number,
+			dto.delivery_name,
+			dto.delivery_address,
+			dto.delivery_phone_number,
+			dto.delivery_message,
+		]
 
 		try {
 			const insertResult = await new Promise((resolve, reject) => {
@@ -125,46 +147,46 @@ export class OrderRepository implements IOrderRepository {
 		}
 	}
 
-	public async updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO> {
-		const query = `UPDATE orders SET user_id = ?, content = ? WHERE id = ?`
-		const values = [dto.user_id, dto.target_address, dto.id]
+	// public async updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO> {
+	// 	const query = `UPDATE orders SET user_id = ?, content = ? WHERE id = ?`
+	// 	const values = [dto.user_id, dto.target_address, dto.id]
 
-		try {
-			const insertResult = await new Promise((resolve, reject) => {
-				connection.query(query, values, (error, results) => {
-					if (error) {
-						reject(error)
-					} else {
-						resolve(results)
-					}
-				})
-			})
+	// 	try {
+	// 		const insertResult = await new Promise((resolve, reject) => {
+	// 			connection.query(query, values, (error, results) => {
+	// 				if (error) {
+	// 					reject(error)
+	// 				} else {
+	// 					resolve(results)
+	// 				}
+	// 			})
+	// 		})
 
-			const selectQuery = `SELECT * FROM orders WHERE id = ?`
+	// 		const selectQuery = `SELECT * FROM orders WHERE id = ?`
 
-			const selectResult = await new Promise((resolve, reject) => {
-				connection.query(selectQuery, [insertResult], (selectError, selectResults) => {
-					if (selectError) {
-						reject(selectError)
-					} else {
-						resolve(selectResults)
-					}
-				})
-			})
+	// 		const selectResult = await new Promise((resolve, reject) => {
+	// 			connection.query(selectQuery, [insertResult], (selectError, selectResults) => {
+	// 				if (selectError) {
+	// 					reject(selectError)
+	// 				} else {
+	// 					resolve(selectResults)
+	// 				}
+	// 			})
+	// 		})
 
-			console.log('주문 수정 후 조회 ::: ', selectResult[0])
+	// 		console.log('주문 수정 후 조회 ::: ', selectResult[0])
 
-			return selectResult[0] as OrderDTO
-		} catch (e) {
-			console.error(e)
-			throw e
-		}
-	}
+	// 		return selectResult[0] as OrderDTO
+	// 	} catch (e) {
+	// 		console.error(e)
+	// 		throw e
+	// 	}
+	// }
 }
 export interface IOrderRepository {
 	createOrder(dto: CreateOrderDTO): Promise<OrderDTO>
 	getOrdersForDate(startDate: Date, endDate: Date): Promise<any[]>
 	getOrder(dto: number): Promise<OrderDTO>
 	getOrderHistoryByUserId(user_id: number): Promise<OrderDTO[]>
-	updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO>
+	// updateOrder(dto: UpdateOrderDTO): Promise<OrderDTO>
 }
