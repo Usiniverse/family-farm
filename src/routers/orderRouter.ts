@@ -8,11 +8,11 @@ export const orderRouter = express.Router()
 // 주문 생성
 orderRouter.post('/', checkedUser, orderController.createOrder)
 
-// 유저의 주문 조회
-orderRouter.get('/', checkedUser, orderController.getOrderHistoryByUserId)
+// 최신 주문 건 조회
+orderRouter.get('/', checkedUser, orderController.getLatestOrder)
 
-// 단일 주문 건 조회
-orderRouter.get('/:id', checkedUser, orderController.getOrder)
+// 유저의 주문 이력 조회
+orderRouter.get('/list', checkedUser, orderController.getOrderHistoryByUserId)
 
 // 엑셀시트 생성하기(checkedUser 추가 예정)
-orderRouter.post('/list', generateOrderExcelsheet)
+// orderRouter.post('/list', generateOrderExcelsheet)

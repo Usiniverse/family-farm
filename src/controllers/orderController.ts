@@ -34,6 +34,14 @@ export class OrderController {
 		return res.status(201).json(result)
 	}
 
+	public async getLatestOrder(req: CustomExpressRequest, res: Response) {
+		const user_id = req.auth.id
+
+		const result = await orderService.getOrderHistoryByUserId(user_id)
+
+		return res.status(201).json(result[0])
+	}
+
 	public async getOrderHistoryByUserId(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
 
