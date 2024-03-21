@@ -15,7 +15,6 @@ export class ProductController {
 		const user_id = req.auth.id
 
 		const dto: CreateProductDTO = { user_id, ...req.body }
-		console.log('상품 구성 ::: ', dto)
 
 		const result = await productService.createProduct(dto)
 

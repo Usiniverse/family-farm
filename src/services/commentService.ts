@@ -10,7 +10,6 @@ export class CommentService {
 	}
 	public async createComment(dto: CreateCommentDTO) {
 		const { user_id, post_id, contents } = dto
-		console.log('postId', post_id, typeof post_id)
 
 		const post = await postRepository.getPost(post_id)
 

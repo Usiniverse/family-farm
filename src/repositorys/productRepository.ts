@@ -6,14 +6,10 @@ import { UpdateProductDTO } from '../dtos/products/UpdateProductDTO'
 
 export class ProductRepository implements IProductRepository {
 	public async createProduct(dto: CreateProductDTO): Promise<ProductDTO> {
-		console.log('레포지토리 :::', dto)
-
 		const query = `
 			INSERT INTO products (product_name, price, weight, is_opened)
 			VALUES (?, ?, ?, ?)`
 		const values = [dto.product_name, dto.price, dto.weight, dto.is_opened]
-
-		console.log('values 체크::: ', values)
 
 		try {
 			const result = await new Promise<RowDataPacket>((resolve, reject) => {

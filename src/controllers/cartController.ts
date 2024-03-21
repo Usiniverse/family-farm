@@ -24,7 +24,6 @@ export class CartController {
 
 	public async getCarts(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
-		console.log(user_id)
 
 		const result = await cartService.getCarts(user_id)
 

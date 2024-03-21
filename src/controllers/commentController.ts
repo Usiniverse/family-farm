@@ -7,8 +7,6 @@ import { commentService } from '../services'
 export class CommentController {
 	public async createComment(req: CustomExpressRequest, res: Response) {
 		const user_id = req.auth.id
-		console.log(req.params.id, typeof req.params.id)
-		console.log('params:::', req.params)
 
 		const post_id = +req.params.id
 		const contents = req.body.contents

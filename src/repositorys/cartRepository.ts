@@ -156,7 +156,6 @@ export class CartRepository implements ICartRepository {
 					}
 				})
 			})
-			console.log('레포지토리 ::: selectResult[0]', selectResult[0])
 
 			return selectResult[0] as CartDTO
 		} catch (e) {
