@@ -1,3 +1,4 @@
+import { log } from 'console'
 import { CreateCartDTO } from '../dtos/carts/CreateCartDTO'
 import { CartDTO } from '../dtos/carts/cartDTO'
 import { UpdateCartDTO } from '../dtos/carts/updateCartDTO'
@@ -15,7 +16,8 @@ export class CartService {
 
 	public async createCart(dto: CreateCartDTO): Promise<CartDTO> {
 		try {
-			const totalPrice = dto.price * dto.quantity
+			const product = await this.productRepository.getProduct(dto.product_id)
+			const totalPrice = product.price * dto.quantity
 
 			dto.price = totalPrice
 
@@ -32,12 +34,31 @@ export class CartService {
 		try {
 			const result = await this.cartRepository.getCarts(user_id)
 
-			for (let i = 0; i < result.length; i++) {
-				const product = await this.productRepository.getProduct(result[i].product_id)
-				result[i].product = product
-			}
+			// for (let i = 0; i < result.length; i++) {
+			// 	// const product = await this.productRepository.getProduct(result[i].product_id)
+			// 	// result[i].product = product
+			// 	for (let j = 0; j < result.length; j++) {
+			// 		if (result[i].product_id === result[j].product_id) {
+			// 			result[i].quantity = result[i].quantity + result[j].quantity;
+			// 		}
+			// 	}
+			// }
 
-			return result
+			const aggregatedCart = []
+			result.forEach((cart) => {
+				const { product_id, price, quantity } = cart
+				if (aggregatedCart[product_id]) {
+					aggregatedCart[product_id].price += price
+					aggregatedCart[product_id].quantity += quantity
+				} else {
+					aggregatedCart[product_id] = { ...cart, price, quantity }
+				}
+			})
+
+			const groupedCart = aggregatedCart.filter((v) => v !== undefined)
+			console.log('상품 묶기 ::: ', groupedCart)
+
+			return groupedCart
 		} catch (error) {
 			console.error(error)
 			throw error
