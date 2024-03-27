@@ -5,34 +5,44 @@ import { connection } from '../../shared/lib/db'
 import { UpdateCartDTO } from '../dtos/carts/updateCartDTO'
 
 export class CartRepository implements ICartRepository {
+	public mapRowToCartDTO(row: any): CartDTO {
+		return {
+			id: row.id,
+			user_id: row.user_id,
+			created_at: row.created_at,
+			updated_at: row.updated_at,
+		}
+	}
+
 	public async createCart(dto: CreateCartDTO): Promise<CartDTO> {
-		const query = `INSERT INTO carts (user_id, product_id, quantity, product_image, price) VALUES (?, ?, ?, ?, ?)`
-		const values = [dto.user_id, dto.product_id, dto.quantity, dto.product_image, dto.price]
+		const query = `INSERT INTO carts (user_id) VALUES (?)`
+		const values = [dto.user_id]
 
 		try {
-			const result = await new Promise<RowDataPacket>((resolve, reject) => {
+			const result = await new Promise((resolve, reject) => {
 				connection.query(query, values, (error, result) => {
 					if (error) {
 						reject(error)
 					} else {
-						resolve(result)
+						resolve(result.insertId)
 					}
 				})
 			})
+			console.log('result', result)
 
 			const selectQuery = `SELECT * FROM carts WHERE id = ?`
 
 			const selectResult = await new Promise((resolve, reject) => {
-				connection.query(selectQuery, [result.insertId], (selectError, selectResults) => {
+				connection.query(selectQuery, [result], (selectError, selectResults) => {
 					if (selectError) {
 						reject(selectError)
 					} else {
-						resolve(selectResults)
+						resolve(this.mapRowToCartDTO(selectResults[0]))
 					}
 				})
 			})
 
-			return selectResult[0] as CartDTO
+			return selectResult as CartDTO
 		} catch (error) {
 			console.error(error)
 			throw error
@@ -129,40 +139,40 @@ export class CartRepository implements ICartRepository {
 		}
 	}
 
-	public async updateCart(dto: UpdateCartDTO): Promise<CartDTO> {
-		const query = `UPDATE carts SET quantity = ?, price = ? WHERE id = ?`
-		const values = [dto.quantity, dto.price, dto.cart_id]
+	// public async updateCart(dto: UpdateCartDTO): Promise<CartDTO> {
+	// 	const query = `UPDATE carts SET quantity = ?, WHERE id = ?`
+	// 	const values = [dto.quantity, dto.cart_id]
 
-		try {
-			await new Promise((resolve, reject) => {
-				connection.query(query, values, (error, results) => {
-					if (error) {
-						reject(error)
-					} else {
-						resolve(results)
-					}
-				})
-			})
+	// 	try {
+	// 		await new Promise((resolve, reject) => {
+	// 			connection.query(query, values, (error, results) => {
+	// 				if (error) {
+	// 					reject(error)
+	// 				} else {
+	// 					resolve(results)
+	// 				}
+	// 			})
+	// 		})
 
-			const selectQuery = `SELECT * FROM carts WHERE id = ?`
-			const selectValue = [dto.cart_id]
+	// 		const selectQuery = `SELECT * FROM carts WHERE id = ?`
+	// 		const selectValue = [dto.cart_id]
 
-			const selectResult = await new Promise((resolve, reject) => {
-				connection.query(selectQuery, selectValue, (selectError, selectResults) => {
-					if (selectError) {
-						reject(selectError)
-					} else {
-						resolve(selectResults)
-					}
-				})
-			})
+	// 		const selectResult = await new Promise((resolve, reject) => {
+	// 			connection.query(selectQuery, selectValue, (selectError, selectResults) => {
+	// 				if (selectError) {
+	// 					reject(selectError)
+	// 				} else {
+	// 					resolve(selectResults)
+	// 				}
+	// 			})
+	// 		})
 
-			return selectResult[0] as CartDTO
-		} catch (e) {
-			console.error(e)
-			throw e
-		}
-	}
+	// 		return selectResult[0] as CartDTO
+	// 	} catch (e) {
+	// 		console.error(e)
+	// 		throw e
+	// 	}
+	// }
 }
 
 export interface ICartRepository {
@@ -171,5 +181,5 @@ export interface ICartRepository {
 	getCartByUserId(user_id: number): Promise<CartDTO>
 	getCarts(user_id: number): Promise<CartDTO[]>
 	deleteCart(cart_id: number): Promise<CartDTO>
-	updateCart(dto: UpdateCartDTO): Promise<CartDTO>
+	// updateCart(dto: UpdateCartDTO): Promise<CartDTO>
 }

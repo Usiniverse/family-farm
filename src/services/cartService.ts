@@ -1,64 +1,91 @@
-import { log } from 'console'
+import { ServiceError } from '../../shared/error/error'
 import { CreateCartDTO } from '../dtos/carts/CreateCartDTO'
 import { CartDTO } from '../dtos/carts/cartDTO'
 import { UpdateCartDTO } from '../dtos/carts/updateCartDTO'
+import { lineItemsRepository } from '../repositorys'
 import { ICartRepository } from '../repositorys/cartRepository'
+import { ILineItemsRepository } from '../repositorys/lineItemsRepository'
 import { IProductRepository } from '../repositorys/productRepository'
 
 export class CartService {
 	private cartRepository: ICartRepository
 	private productRepository: IProductRepository
+	private lineItemsRepository: ILineItemsRepository
 
-	constructor(cartRepository: ICartRepository, productRepository: IProductRepository) {
+	constructor(
+		cartRepository: ICartRepository,
+		productRepository: IProductRepository,
+		lineItemsRepository: ILineItemsRepository,
+	) {
 		this.cartRepository = cartRepository
 		this.productRepository = productRepository
+		this.lineItemsRepository = lineItemsRepository
 	}
 
-	public async createCart(dto: CreateCartDTO): Promise<CartDTO> {
+	public async createCart(dto: CreateCartDTO): Promise<CartDTO | ServiceError> {
 		try {
-			const product = await this.productRepository.getProduct(dto.product_id)
-			const totalPrice = product.price * dto.quantity
+			const cart = await this.cartRepository.getCartByUserId(dto.user_id)
 
-			dto.price = totalPrice
+			// 장바구니가 없다면 새로 생성함
+			if (!cart) {
+				const cart = await this.cartRepository.createCart(dto)
+				const lineItems = await lineItemsRepository.createLineItem({
+					cart_id: cart.id,
+					product_id: dto.product_id,
+					quantity: dto.quantity,
+				})
+				cart.line_items = [lineItems]
 
-			const result = await this.cartRepository.createCart(dto)
+				return cart
+			} else {
+				// 장바구니가 있다면 찾아서 상품 추가
+				const lineItems = await lineItemsRepository.getLineItemByCartId(cart.id)
+				const checkArray = lineItems.find((v) => v.product_id === dto.product_id)
 
-			return result
+				if (checkArray) {
+					// 이미 상품이 있으면 장바구니 상품의 수량을 수정함
+					await this.updateCart({
+						cart_id: cart.id,
+						quantity: dto.quantity,
+						product_id: dto.product_id,
+					})
+				} else {
+					// 장바구니에 상품이 없다면 상품을 추가함
+					await lineItemsRepository.createLineItem({
+						cart_id: cart.id,
+						product_id: dto.product_id,
+						quantity: dto.quantity,
+					})
+				}
+
+				const result = await this.cartRepository.getCartByUserId(dto.user_id)
+				const lineItem = await lineItemsRepository.getLineItemByCartId(cart.id)
+				result.line_items = lineItem
+
+				return result
+			}
 		} catch (error) {
 			console.error(error)
 			throw error
 		}
 	}
 
-	public async getCarts(user_id: number): Promise<CartDTO[]> {
+	// cart 안에 line_items 리스트
+	public async getCarts(user_id: number): Promise<CartDTO | ServiceError> {
 		try {
-			const result = await this.cartRepository.getCarts(user_id)
+			const cart = await this.cartRepository.getCartByUserId(user_id)
+			if (!cart) {
+				return { message: '장바구니가 비어있습니다.' }
+			}
 
-			// for (let i = 0; i < result.length; i++) {
-			// 	// const product = await this.productRepository.getProduct(result[i].product_id)
-			// 	// result[i].product = product
-			// 	for (let j = 0; j < result.length; j++) {
-			// 		if (result[i].product_id === result[j].product_id) {
-			// 			result[i].quantity = result[i].quantity + result[j].quantity;
-			// 		}
-			// 	}
-			// }
+			const lineItems = await lineItemsRepository.getLineItemByCartId(cart.id)
+			if (!lineItems) {
+				return { message: '장바구니가 비어있습니다.' }
+			}
 
-			const aggregatedCart = []
-			result.forEach((cart) => {
-				const { product_id, price, quantity } = cart
-				if (aggregatedCart[product_id]) {
-					aggregatedCart[product_id].price += price
-					aggregatedCart[product_id].quantity += quantity
-				} else {
-					aggregatedCart[product_id] = { ...cart, price, quantity }
-				}
-			})
+			cart.line_items = lineItems
 
-			const groupedCart = aggregatedCart.filter((v) => v !== undefined)
-			console.log('상품 묶기 ::: ', groupedCart)
-
-			return groupedCart
+			return cart
 		} catch (error) {
 			console.error(error)
 			throw error
@@ -83,21 +110,29 @@ export class CartService {
 		}
 	}
 
-	public async updateCart(dto: UpdateCartDTO): Promise<CartDTO> {
+	public async updateCart(dto: UpdateCartDTO): Promise<CartDTO | ServiceError> {
 		try {
-			const cart = await this.cartRepository.getCartByUserId(dto.user_id)
+			const cart = await this.cartRepository.getCart(dto.cart_id)
+			if (!cart) {
+				return { message: '장바구니를 찾을 수 없습니다.' }
+			}
 
 			const product = await this.productRepository.getProduct(dto.product_id)
-
-			// 수량 조절 시 기존 DB와 맞지 않으면 수정해주기
-			if (cart.quantity !== dto.quantity) {
-				dto.price = dto.quantity * product.price
-				const result = await this.cartRepository.updateCart(dto)
-				return result
-			} else {
-				// 기존과 수량이 같다면 수정할 필요 없음.
-				return
+			if (!product) {
+				return { message: '상품을 찾을 수 없습니다.' }
 			}
+
+			if (product.id !== dto.product_id) {
+			}
+
+			const lineItems = await lineItemsRepository.updateLineItem({
+				quantity: dto.quantity,
+				product_id: dto.product_id,
+				cart_id: dto.cart_id,
+			})
+
+			cart.line_items = [lineItems]
+			return cart
 		} catch (error) {
 			console.error(error)
 			throw error
