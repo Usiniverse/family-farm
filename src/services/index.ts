@@ -8,6 +8,7 @@ import {
 	commentRepository,
 	cartRepository,
 	orderItemRepository,
+	lineItemsRepository,
 } from '../repositorys'
 import { OrderService } from './orderService'
 import { ProductService } from './productService'
@@ -22,7 +23,7 @@ const orderService = new OrderService(orderRepository, orderItemRepository)
 const productService = new ProductService(productRepository)
 const commentService = new CommentService(commentRepository)
 const authService = new AuthService()
-const cartService = new CartService(cartRepository, productRepository)
+const cartService = new CartService(cartRepository, productRepository, lineItemsRepository)
 const orderItemService = new OrderItemService(orderItemRepository)
 
 export {
