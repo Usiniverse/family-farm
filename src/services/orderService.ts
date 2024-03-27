@@ -33,9 +33,16 @@ export class OrderService {
 			 */
 			const result = await this.orderRepository.createOrder(dto)
 
+			// id: number
+			// user_id: number
+			// created_at: Date
+			// updated_at: Date
+			// line_items?: LineItemDTO[]
 			const aggregatedCart = []
-			dto.carts.forEach((cart) => {
-				const { product_id, price, quantity } = cart
+			dto.order_items.forEach(async (cart) => {
+				const { product_id, quantity } = cart
+				const product = await productRepository.getProduct(product_id)
+				const price = product.price
 				if (aggregatedCart[product_id]) {
 					aggregatedCart[product_id].price = price * quantity
 					aggregatedCart[product_id].quantity += quantity
