@@ -56,4 +56,12 @@ export class UserController {
 
 		return res.status(200).send(result)
 	}
+
+	public async getUserForOrder(req: CustomExpressRequest, res: Response) {
+		const user_id = req.auth.id
+
+		const result = await userService.getUserById(user_id)
+
+		return res.status(200).send(result)
+	}
 }

@@ -39,7 +39,7 @@ export class OrderService {
 			// updated_at: Date
 			// line_items?: LineItemDTO[]
 			const aggregatedCart = []
-			dto.order_items.forEach(async (cart) => {
+			dto.line_items.forEach(async (cart) => {
 				const { product_id, quantity } = cart
 				const product = await productRepository.getProduct(product_id)
 				const price = product.price

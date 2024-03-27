@@ -4,16 +4,16 @@ import { UpdateLineItemDTO } from '../dtos/lineItems/UpdateLineItemDTO'
 import { connection } from '../../shared/lib/db'
 
 export class LineItemsRepository implements ILineItemsRepository {
-	public mapRowToLineItemDTO(row: any): LineItemDTO {
-		return {
-			id: row.id,
-			cart_id: row.cart_id,
-			product_id: row.product_id,
-			quantity: row.quantity,
-			created_at: row.created_at,
-			updated_at: row.updated_at,
-		}
-	}
+	// public mapRowToLineItemDTO(row: any): LineItemDTO {
+	// 	return {
+	// 		id: row.id,
+	// 		cart_id: row.cart_id,
+	// 		product_id: row.product_id,
+	// 		quantity: row.quantity,
+	// 		created_at: row.created_at,
+	// 		updated_at: row.updated_at,
+	// 	}
+	// }
 
 	public async createLineItem(dto: CreateLineItemDTO): Promise<LineItemDTO> {
 		const query = `INSERT INTO line_items (cart_id, product_id, quantity) VALUES (?, ?, ?)`
@@ -37,7 +37,7 @@ export class LineItemsRepository implements ILineItemsRepository {
 					if (selectError) {
 						reject(selectError)
 					} else {
-						resolve(this.mapRowToLineItemDTO(selectResults[0]))
+						resolve(selectResults)
 					}
 				})
 			})
@@ -94,7 +94,7 @@ export class LineItemsRepository implements ILineItemsRepository {
 					if (selectError) {
 						reject(selectError)
 					} else {
-						resolve(this.mapRowToLineItemDTO(selectResults[0]))
+						resolve(selectResults[0])
 					}
 				})
 			})

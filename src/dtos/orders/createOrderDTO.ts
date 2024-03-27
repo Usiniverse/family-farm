@@ -1,4 +1,5 @@
 import { CartDTO } from '../carts/cartDTO'
+import { LineItemDTO } from '../lineItems/lineItemDTO'
 import { OrderItemDTO } from '../orderItems/orderItemDTO'
 
 export interface CreateOrderDTO {
@@ -14,5 +15,5 @@ export interface CreateOrderDTO {
 	created_at: Date
 	updated_at: Date
 	carts?: CartDTO[]
-	order_items?: OrderItemDTO[]
+	line_items?: LineItemDTO[]
 }

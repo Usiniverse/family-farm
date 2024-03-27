@@ -113,7 +113,7 @@ userRouter.post('/', userController.createUserController)
  *                              "deleted_at": null
  *                          }
  */
-userRouter.get('/email', userController.getUserByEmail)
+// userRouter.get('/email', userController.getUserByEmail)
 
 /**
  * @swagger
@@ -138,7 +138,7 @@ userRouter.get('/email', userController.getUserByEmail)
  *                          type: string
  *                          description: "유저 이름"
  */
-userRouter.get('/sns_id', userController.getUserBySnsId)
+// userRouter.get('/sns_id', userController.getUserBySnsId)
 
 /**
  * @swagger
@@ -189,3 +189,6 @@ userRouter.put('/', checkedUser, userController.updateUser)
 
 // 회원탈퇴
 userRouter.delete('/', checkedUser, userController.deleteUser)
+
+// 주문 페이지의 회원 조회용 API
+userRouter.get('/orders', checkedUser, userController.getUserForOrder)

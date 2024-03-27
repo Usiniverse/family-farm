@@ -25,6 +25,7 @@ export class CartService {
 	public async createCart(dto: CreateCartDTO): Promise<CartDTO | ServiceError> {
 		try {
 			const cart = await this.cartRepository.getCartByUserId(dto.user_id)
+			const product = await this.productRepository.getProduct(dto.product_id)
 
 			// 장바구니가 없다면 새로 생성함
 			if (!cart) {
@@ -34,6 +35,7 @@ export class CartService {
 					product_id: dto.product_id,
 					quantity: dto.quantity,
 				})
+				lineItems.product = product
 				cart.line_items = [lineItems]
 
 				return cart
@@ -44,12 +46,15 @@ export class CartService {
 
 				if (checkArray) {
 					// 이미 상품이 있으면 장바구니 상품의 수량을 수정함
-					await this.updateCart({
+					console.log('장바구니 수량 수정 ::: ')
+
+					await lineItemsRepository.updateLineItem({
 						cart_id: cart.id,
 						quantity: dto.quantity,
 						product_id: dto.product_id,
 					})
 				} else {
+					console.log('장바구니 상품 생성 ::: ')
 					// 장바구니에 상품이 없다면 상품을 추가함
 					await lineItemsRepository.createLineItem({
 						cart_id: cart.id,
@@ -60,7 +65,15 @@ export class CartService {
 
 				const result = await this.cartRepository.getCartByUserId(dto.user_id)
 				const lineItem = await lineItemsRepository.getLineItemByCartId(cart.id)
+
+				for (let i = 0; i < lineItem.length; i++) {
+					const product = await this.productRepository.getProduct(lineItem[i].product_id)
+					lineItem[i].product = product
+				}
+
 				result.line_items = lineItem
+
+				console.log('push 후 라인아이템 ::: ', lineItem)
 
 				return result
 			}
@@ -81,6 +94,11 @@ export class CartService {
 			const lineItems = await lineItemsRepository.getLineItemByCartId(cart.id)
 			if (!lineItems) {
 				return { message: '장바구니가 비어있습니다.' }
+			}
+
+			for (let i = 0; i < lineItems.length; i++) {
+				const product = await this.productRepository.getProduct(lineItems[i].product_id)
+				lineItems[i].product = product
 			}
 
 			cart.line_items = lineItems
@@ -122,16 +140,15 @@ export class CartService {
 				return { message: '상품을 찾을 수 없습니다.' }
 			}
 
-			if (product.id !== dto.product_id) {
-			}
-
 			const lineItems = await lineItemsRepository.updateLineItem({
 				quantity: dto.quantity,
 				product_id: dto.product_id,
 				cart_id: dto.cart_id,
 			})
 
+			lineItems.product = product
 			cart.line_items = [lineItems]
+
 			return cart
 		} catch (error) {
 			console.error(error)
