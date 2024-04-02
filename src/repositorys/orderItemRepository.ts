@@ -45,6 +45,8 @@ export class OrderItemRepository implements IOrderItemRepository {
 	}
 
 	public async getOrderItemByOrderId(id: number): Promise<OrderItemDTO[]> {
+		console.log(id)
+
 		const query = `SELECT * FROM order_items WHERE order_id = ? ORDER BY created_at DESC`
 		const values = [id]
 
@@ -53,10 +55,12 @@ export class OrderItemRepository implements IOrderItemRepository {
 				if (error) {
 					reject(error)
 				} else {
+					console.log('resolve 결과', results)
 					resolve(results)
 				}
 			})
 		})
+		console.log('레포지토리 결과', result)
 
 		return result as OrderItemDTO[]
 	}
